@@ -1,0 +1,49 @@
+version: '3.1'
+
+services:
+  api:
+    image: nanoninja/php-fpm:8.1
+    restart: always
+    depends_on:
+      - postgres
+      - mailhog
+      # - redis
+    ports:
+      - 8000:8000
+    volumes:
+      - ./:/var/www/html
+    command: php -S="0.0.0.0:8000" -t="/var/www/html/public"
+    #command: php artisan serve
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  endpoint_adminer:
+    image: adminer:latest
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 9000:8080
+
+  mailhog:
+      image: 'mailhog/mailhog:latest'
+      restart: always
+      ports:
+        - '1025:1025'
+        - '8025:8025'
+
+volumes:
+  pgdata:
+    driver: local
+  mydata:
+    driver: local

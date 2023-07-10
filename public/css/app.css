@@ -1,0 +1,8 @@
+.sombra {
+    box-shadow: 0 0 40px 0 rgb(0 0 0 / 15%) !important;
+    -moz-box-shadow: 0 0 40px 0 rgba(0,0,0,.15) !important;
+    -webkit-box-shadow: 0 0 40px 0 rgb(0 0 0 / 15%) !important;
+    -o-box-shadow: 0 0 40px 0 rgba(0,0,0,.15) !important;
+    -ms-box-shadow: 0 0 40px 0 rgba(0,0,0,.15) !important;
+    background-color: none;
+}
