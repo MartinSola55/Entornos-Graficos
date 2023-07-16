@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="login-register" style="background-image: url('/images/background-login-image.jpg');"">
-    <div class="login-box card">
+<div class="login-register" style="background-image: url('/images/background-login-image.jpeg');"">
+    <div class="login-box card" style="background-color: #ffffff54">
         <div class="card-body sombra p-4">
             <form class="form-horizontal form-material" id="loginform" method="POST" action="{{ route('login') }}">
                 @csrf
                 <h3 class="box-title m-b-20 text-center">Iniciar sesión</h3>
                 <div class="form-group ">
                     <div class="col-xs-12">
-                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email">
+                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus placeholder="Email" style="color: 0000009c">
                         @error('email')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -19,7 +19,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-xs-12">
-                        <input id="password" type="password" class="form-control" name="password" required autocomplete="current-password" placeholder="Contraseña">
+                        <input id="password" type="password" class="form-control" name="password" required autocomplete="current-password" placeholder="Contraseña" style="color: 0000009c">
                         @error('password')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -30,8 +30,8 @@
                 <div class="form-group">
                     <div class="d-flex no-block align-items-center">
                         <div class="checkbox checkbox-primary p-t-0">
-                            <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                            <label for="remember"> Recordarme </label>
+                            <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }} >
+                            <label for="remember" style="color: 0000009c"> Recordarme </label>
                         </div> 
                     </div>
                     {{-- <div class="d-flex justify-content-center mt-4">
