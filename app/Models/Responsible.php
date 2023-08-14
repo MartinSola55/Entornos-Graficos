@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Student extends Model
+class Responsible extends Model
 {
     use HasFactory;
     use SoftDeletes;
@@ -14,9 +14,7 @@ class Student extends Model
     protected $fillable = [
         'name',
         'lastname',
-        'address',
         'phone',
-        'file_number',
         'user_id',
     ];
 
@@ -27,6 +25,6 @@ class Student extends Model
 
     public function Applications()
     {
-        return $this->hasMany(Application::class, 'student_id');
+        return $this->hasMany(Application::class, 'responsible_id');
     }
 }

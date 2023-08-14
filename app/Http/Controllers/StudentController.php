@@ -24,7 +24,7 @@ class StudentController extends Controller
             $student = Student::create([
                 'name' => $request->input('name'),
                 'lastname' => $request->input('lastname'),
-                'adress' => $request->input('adress'),
+                'address' => $request->input('address'),
                 'phone' => $request->input('phone'),
                 'dni' => $request->input('dni'),
                 'file_number' => $request->input('file_number'),
@@ -61,7 +61,7 @@ class StudentController extends Controller
             $student->update([
                 'name' => $request->input('name'),
                 'lastname' => $request->input('lastname'),
-                'adress' => $request->input('adress'),
+                'address' => $request->input('address'),
                 'phone' => $request->input('phone'),
                 'dni' => $request->input('dni'),
                 'file_number' => $request->input('file_number'),

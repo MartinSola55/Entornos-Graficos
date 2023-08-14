@@ -30,5 +30,11 @@ class Users extends Seeder
             'rol_id' => 2,
             'password' => bcrypt('12345678'),
         ]);
+
+        User::create([
+            'email' => 'danieladiaz@gmail.com',
+            'rol_id' => 3,
+            'password' => bcrypt('12345678'),
+        ]);
     }
 }

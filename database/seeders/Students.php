@@ -16,8 +16,7 @@ class Students extends Seeder
         Student::create([
             'name' => 'Martin',
             'lastname' => 'Sola',
-            'adress' => 'Rivadavia 1097',
-            'dni' => '42559237',
+            'address' => 'Rivadavia 1097',
             'phone' => '3404437748',
             'file_number' => '48618',
             'user_id' => 1,
@@ -26,8 +25,7 @@ class Students extends Seeder
         Student::create([
             'name' => 'Franco',
             'lastname' => 'Pinciroli',
-            'adress' => 'Juan José Paso 8324',
-            'dni' => '43167893',
+            'address' => 'Juan José Paso 8324',
             'phone' => '3412787705',
             'file_number' => '47854',
             'user_id' => 2,
@@ -36,8 +34,7 @@ class Students extends Seeder
         Student::create([
             'name' => 'Ezequiel',
             'lastname' => 'Fernández Cariaga',
-            'adress' => 'Av. Carlos Pellegrini 1730',
-            'dni' => '43313322',
+            'address' => 'Av. Carlos Pellegrini 1730',
             'phone' => '3364623469',
             'file_number' => '47771',
             'user_id' => 3,
