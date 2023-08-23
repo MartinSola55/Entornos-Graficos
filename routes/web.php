@@ -23,9 +23,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // HOME
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    // PERSONS
+    Route::get('/student/index', [App\Http\Controllers\StudentController::class, 'index']);
+    Route::get('/teacher/index', [App\Http\Controllers\TeacherController::class, 'index']);
+    Route::get('/responsible/index', [App\Http\Controllers\ResponsibleController::class, 'index']);
 });
 
-// STUDENT
+//
 Route::middleware(['auth'])->group(function () {
 
     // HOME

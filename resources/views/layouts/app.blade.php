@@ -170,6 +170,13 @@
                             <li>
                                 <a class="waves-effect waves-dark" href="{{ url('/application/index') }}" aria-expanded="false"><i class="bi bi-file-text"></i><span class="hide-menu">Solicitudes</span></a>
                             </li>
+                            <li><a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="bi bi-person"></i><span class="hide-menu">Personas</span></a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li><a href="{{ url('/student/index') }}">Alumnos</a></li>
+                                    <li><a href="{{ url('/teacher/index') }}">Docentes</a></li>
+                                    <li><a href="{{ url('/responsible/index') }}">Responsables</a></li>
+                                </ul>
+                            </li>
                         @endif
                     </ul>
                 </nav>

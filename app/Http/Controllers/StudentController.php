@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Person\PersonCreateRequest;
 use App\Http\Requests\Person\PersonUpdateRequest;
 use App\Models\Person;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PersonController extends Controller
+class StudentController extends Controller
 {
     public function index()
     {
-        $students = Person::all();
+        $students = User::where('rol_id', 2)->with('Person')->get();
         return view('students.index', compact('students'));
     }
 
@@ -25,10 +26,7 @@ class PersonController extends Controller
                 'lastname' => $request->input('lastname'),
                 'address' => $request->input('address'),
                 'phone' => $request->input('phone'),
-                'dni' => $request->input('dni'),
-                'file_number' => $request->input('file_number'),
-                'observation' => $request->input('observation'),
-                'is_active' => 1
+                'file_number' => $request->input('file_number')
             ]);
 
             return response()->json([
@@ -62,9 +60,7 @@ class PersonController extends Controller
                 'lastname' => $request->input('lastname'),
                 'address' => $request->input('address'),
                 'phone' => $request->input('phone'),
-                'dni' => $request->input('dni'),
                 'file_number' => $request->input('file_number'),
-                'observation' => $request->input('observation')
             ]);
 
             return response()->json([

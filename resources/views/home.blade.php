@@ -52,11 +52,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($students as $student)
+                                    @foreach ($persons as $person)
                                     <tr>
-                                        <td>{{ $student->name }}</td>
-                                        <td>{{ $student->lastname }}</td>
-                                        <td>{{ $student->file_number }}</td>
+                                        <td>{{ $person->name }}</td>
+                                        <td>{{ $person->lastname }}</td>
+                                        <td>{{ $person->file_number }}</td>
                                     </tr>                                      
                                     @endforeach
                                 </tbody>

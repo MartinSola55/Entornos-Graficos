@@ -33,8 +33,8 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $students = Person::all();
+        $persons = Person::all();
 
-        return view('home', compact('user', 'students'));
+        return view('home', compact('user', 'persons'));
     }
 }
