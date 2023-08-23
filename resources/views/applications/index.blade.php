@@ -51,7 +51,7 @@
                                             <td>{{ $app->Student->lastname }}, {{ $app->Student->name }}</td>
                                             <td>{{ $app->Responsible->lastname }}, {{ $app->Responsible->name }}</td>
                                             <td>{{ $app->Teacher->lastname }}, {{ $app->Teacher->name }}</td>
-                                            <td>{{ $app->pps->description }}</td>
+                                            <td>{{ $app->description }}</td>
                                             <td>{{ $app->finish_date ? $app->finish_date->format('d/m/Y') : "-" }}</td>
                                             <td>{{ $app->observation }}</td>
                                             <td class="text-center">

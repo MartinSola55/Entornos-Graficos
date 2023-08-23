@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Student;
-use App\Observers\StudentObserver;
+use App\Models\Person;
+use App\Observers\PersonObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 
@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Student::observe(StudentObserver::class);
+        Person::observe(PersonObserver::class);
 
         if($this->app->environment('production'))
         {

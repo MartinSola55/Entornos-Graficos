@@ -170,9 +170,6 @@
                             <li>
                                 <a class="waves-effect waves-dark" href="{{ url('/application/index') }}" aria-expanded="false"><i class="bi bi-file-text"></i><span class="hide-menu">Solicitudes</span></a>
                             </li>
-                            <li>
-                                <a class="waves-effect waves-dark" href="{{ url('/pps/index') }}" aria-expanded="false"><i class="bi bi-person-lines-fill"></i><span class="hide-menu">PPS</span></a>
-                            </li>
                         @endif
                     </ul>
                 </nav>

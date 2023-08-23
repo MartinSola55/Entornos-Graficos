@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Application\ApplicationCreateRequest;
 use App\Http\Requests\Application\ApplicationUpdateRequest;
 use App\Models\Application;
-use App\Models\PPS;
-use App\Models\Student;
+use App\Models\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -19,15 +18,14 @@ class ApplicationController extends Controller
         } else {
             $applications = Application::where('student_id', auth()->user()->Person->id)->get();
         }
-        $pps = PPS::all();
-        return view('applications.index', compact('applications', 'pps'));
+        return view('applications.index', compact('applications'));
     }
 
-    public function create(ApplicationCreateRequest $request)
+    public function create(Request $request)
     {
         $today = Carbon::now(new \DateTimeZone('America/Argentina/Buenos_Aires'));
         try {
-            $student = Student::where('user_id', auth()->user()->id)->first();
+            $student = Person::where('user_id', auth()->user()->id)->first();
             if ($student == null) {
                 return response()->json([
                     'success' => false,

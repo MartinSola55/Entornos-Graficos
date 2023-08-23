@@ -22,10 +22,9 @@ class ApplicationUpdateRequest extends BaseFormRequest
     public function rules(): array
     {
         $this->validate([
-            'student_id' => ['required', 'integer', 'exists:students,id'],
-            'responsible_id' => ['required', 'integer', 'exists:responsibles,id'],
-            'teacher_id' => ['required', 'integer', 'exists:teachers,id'],
-            'pps_id' => ['required', 'integer', 'exists:pps,id'],
+            'student_id' => ['required', 'integer', 'exists:persons,id'],
+            'responsible_id' => ['required', 'integer', 'exists:persons,id'],
+            'teacher_id' => ['required', 'integer', 'exists:persons,id'],
             'is_finished' => ['nullable', 'boolean'],
             'is_approved' => ['nullable', 'boolean'],
             'observation' => ['nullable', 'string', 'max:255'],

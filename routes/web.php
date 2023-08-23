@@ -34,8 +34,5 @@ Route::middleware(['auth'])->group(function () {
     // SOLICITUDES
     Route::get('/application/index', [App\Http\Controllers\ApplicationController::class, 'index']);
     Route::post('/application/create', [App\Http\Controllers\ApplicationController::class, 'create']);
-
-    // PPS
-    Route::get('/pps/index', [App\Http\Controllers\PpsController::class, 'index']);
 });
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Student;
+namespace App\Http\Requests\Person;
 
 use App\Http\Requests\BaseFormRequest;
 
-class StudentCreateRequest extends BaseFormRequest
+class PersonUpdateRequest extends BaseFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

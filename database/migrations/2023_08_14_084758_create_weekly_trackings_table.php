@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('application_id')->constrained('applications');
             $table->binary('file');
             $table->boolean('is_accepted')->default(false);
+            $table->string('observation')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

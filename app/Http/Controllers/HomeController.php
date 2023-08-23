@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
+use App\Models\Person;
 use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Http\Request;
@@ -33,7 +33,7 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $students = Student::all();
+        $students = Person::all();
 
         return view('home', compact('user', 'students'));
     }

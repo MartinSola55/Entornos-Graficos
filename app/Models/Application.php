@@ -24,22 +24,17 @@ class Application extends Model
 
     public function Student()
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(Person::class, 'student_id');
     }
 
     public function Responsible()
     {
-        return $this->belongsTo(Responsible::class, 'responsible_id');
+        return $this->belongsTo(Person::class, 'responsible_id');
     }
 
     public function Teacher()
     {
-        return $this->belongsTo(Teacher::class, 'teacher_id');
-    }
-
-    public function Pps()
-    {
-        return $this->belongsTo(Pps::class, 'pps_id');
+        return $this->belongsTo(Person::class, 'teacher_id');
     }
 
     public function FinalReports()

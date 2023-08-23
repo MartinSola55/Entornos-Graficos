@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Application;
+namespace App\Http\Requests\Person;
 
 use App\Http\Requests\BaseFormRequest;
 
-class ApplicationCreateRequest extends BaseFormRequest
+class PersonShowRequest extends BaseFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,19 @@ class ApplicationCreateRequest extends BaseFormRequest
     public function rules(): array
     {
         $this->validate([
-            'pps_id' => ['required', 'integer', 'exists:pps,id'],
+            'id' => ['required', 'exists:students,id'],
         ]);
 
         return [
-            'pps_id',
+            'name',
+            'lastname',
+            'adress',
+            'phone',
+            'dni',
+            'is_active',
+            'file_number',
+            'observation',
+            'user_id'
         ];
     }
 }

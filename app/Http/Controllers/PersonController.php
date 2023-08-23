@@ -2,26 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Student\StudentCreateRequest;
-use App\Http\Requests\Student\StudentUpdateRequest;
-use App\Models\Student;
+use App\Http\Requests\Person\PersonCreateRequest;
+use App\Http\Requests\Person\PersonUpdateRequest;
+use App\Models\Person;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class StudentController extends Controller
+class PersonController extends Controller
 {
     public function index()
     {
-        $students = Student::all();
-        // dd($clients);
+        $students = Person::all();
         return view('students.index', compact('students'));
     }
 
-    public function create(StudentCreateRequest $request)
+    public function create(PersonCreateRequest $request)
     {
         try {
-            $student = Student::create([
+            $student = Person::create([
                 'name' => $request->input('name'),
                 'lastname' => $request->input('lastname'),
                 'address' => $request->input('address'),
@@ -49,15 +48,15 @@ class StudentController extends Controller
 
     public function details($id)
     {
-        $student = Student::find($id);
+        $student = Person::find($id);
 
         return view('students.details', compact('student'));
     }
 
-    public function update(StudentUpdateRequest $request)
+    public function update(PersonUpdateRequest $request)
     {
         try {
-            $student = Student::findOrFail($request->input('id'));
+            $student = Person::findOrFail($request->input('id'));
             $student->update([
                 'name' => $request->input('name'),
                 'lastname' => $request->input('lastname'),
@@ -77,31 +76,6 @@ class StudentController extends Controller
             return response()->json([
                 'success' => false,
                 'title' => 'Error al editar el estudiante',
-                'message' => 'Intente nuevamente o comuníquese para soporte',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function setIsActive(Request $request)
-    {
-        try {
-            $student = Student::find($request->input("id"));
-            $student = $student->update([
-                'is_active' => !$student->is_active
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Estado del estudiante actualizado correctamente',
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'title' => 'Error al actualizar el estado del estudiante',
                 'message' => 'Intente nuevamente o comuníquese para soporte',
                 'error' => $e->getMessage()
             ], 400);

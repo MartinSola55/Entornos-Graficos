@@ -2,18 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\Student;
+use App\Models\Person;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class Students extends Seeder
+class Persons extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Student::create([
+        Person::create([
             'name' => 'Martin',
             'lastname' => 'Sola',
             'address' => 'Rivadavia 1097',
@@ -22,7 +22,7 @@ class Students extends Seeder
             'user_id' => 1,
         ]);
 
-        Student::create([
+        Person::create([
             'name' => 'Franco',
             'lastname' => 'Pinciroli',
             'address' => 'Juan José Paso 8324',
@@ -31,7 +31,7 @@ class Students extends Seeder
             'user_id' => 2,
         ]);
 
-        Student::create([
+        Person::create([
             'name' => 'Ezequiel',
             'lastname' => 'Fernández Cariaga',
             'address' => 'Av. Carlos Pellegrini 1730',
