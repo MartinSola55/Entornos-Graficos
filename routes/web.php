@@ -30,5 +30,12 @@ Route::middleware(['auth'])->group(function () {
 
     // HOME
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+    // SOLICITUDES
+    Route::get('/application/index', [App\Http\Controllers\ApplicationController::class, 'index']);
+    Route::post('/application/create', [App\Http\Controllers\ApplicationController::class, 'create']);
+
+    // PPS
+    Route::get('/pps/index', [App\Http\Controllers\PpsController::class, 'index']);
 });
 

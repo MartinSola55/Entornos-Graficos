@@ -122,10 +122,15 @@
                                 <ul class="dropdown-user">
                                     <li>
                                         <div class="dw-user-box">
-                                            <div class="u-img"><img src="{{ asset('images/profile.png') }}" alt="user"></div>
+                                            <div class="u-img">
+                                                <img src="{{ asset('images/profile.png') }}" alt="user">
+                                            </div>
                                             <div class="u-text">
-                                                <h4>{{ Auth::user()->name }}</h4>
+                                                @if(Auth::user())
+                                                <h4>{{ Auth::user()->role->name }}</h4>
                                                 <p class="text-muted">{{ Auth::user()->email }}</p>
+                                                @else
+                                                @endif
                                             </div>
                                         </div>
                                     </li>
@@ -161,6 +166,12 @@
                             <li class="nav-small-cap">FACULTAD</li>
                             <li>
                                 <a class="waves-effect waves-dark" href="{{ url('/home') }}" aria-expanded="false"><i class="bi bi-house"></i><span class="hide-menu">Inicio</span></a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-dark" href="{{ url('/application/index') }}" aria-expanded="false"><i class="bi bi-file-text"></i><span class="hide-menu">Solicitudes</span></a>
+                            </li>
+                            <li>
+                                <a class="waves-effect waves-dark" href="{{ url('/pps/index') }}" aria-expanded="false"><i class="bi bi-person-lines-fill"></i><span class="hide-menu">PPS</span></a>
                             </li>
                         @endif
                     </ul>

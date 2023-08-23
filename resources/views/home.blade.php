@@ -48,7 +48,6 @@
                                     <tr>
                                         <th>Nombre</th>
                                         <th>Apellido</th>
-                                        <th>DNI</th>
                                         <th>Legajo</th>
                                     </tr>
                                 </thead>
@@ -57,7 +56,6 @@
                                     <tr>
                                         <td>{{ $student->name }}</td>
                                         <td>{{ $student->lastname }}</td>
-                                        <td>{{ $student->dni }}</td>
                                         <td>{{ $student->file_number }}</td>
                                     </tr>                                      
                                     @endforeach

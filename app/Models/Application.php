@@ -19,6 +19,7 @@ class Application extends Model
         'finish_date',
         'is_finished',
         'observation',
+        'is_approved',
     ];
 
     public function Student()

@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'password',
+        'rol_id',
     ];
 
     /**
@@ -40,4 +41,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'rol_id');
+    }
+
+    public function Person()
+    {
+        if (Student::where('user_id', $this->id)->exists()) return $this->belongsTo(Student::class, 'user_id');
+        else if (Teacher::where('user_id', $this->id)->exists()) return $this->belongsTo(Teacher::class, 'user_id');
+        else if (Responsible::where('user_id', $this->id)->exists()) return $this->belongsTo(Responsible::class, 'user_id');
+        else return null;
+    }
 }
