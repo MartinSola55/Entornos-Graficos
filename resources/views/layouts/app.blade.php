@@ -91,7 +91,7 @@
                         <!-- Logo text -->
                         <span>
                             <!-- Logo text -->
-                            <img src="{{ asset('images/logo.png') }}" alt="Inicio" class="p-2" style="width: 200px; height: 70px;"/>
+                            <img src="{{ asset('images/logo.png') }}" alt="Inicio" class="p-2" style="width: 190; height: 60px;"/>
                         </span>
                     </a>
                 </div>

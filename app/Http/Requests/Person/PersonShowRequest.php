@@ -28,13 +28,10 @@ class PersonShowRequest extends BaseFormRequest
         return [
             'name',
             'lastname',
-            'adress',
+            'address',
             'phone',
-            'dni',
-            'is_active',
             'file_number',
-            'observation',
-            'user_id'
+            'email',
         ];
     }
 }

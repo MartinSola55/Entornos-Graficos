@@ -24,10 +24,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // HOME
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-    // PERSONS
+    // STUDENT
     Route::get('/student/index', [App\Http\Controllers\StudentController::class, 'index']);
+    Route::post('/student/create', [App\Http\Controllers\StudentController::class, 'create']);
+    Route::post('/student/edit', [App\Http\Controllers\StudentController::class, 'update']);
+    Route::post('/student/delete', [App\Http\Controllers\StudentController::class, 'delete']);
+
+    // TEACHER
     Route::get('/teacher/index', [App\Http\Controllers\TeacherController::class, 'index']);
+    Route::post('/teacher/create', [App\Http\Controllers\TeacherController::class, 'create']);
+    Route::post('/teacher/edit', [App\Http\Controllers\TeacherController::class, 'update']);
+    Route::post('/teacher/delete', [App\Http\Controllers\TeacherController::class, 'delete']);
+
+    // RESPONSIBLE
     Route::get('/responsible/index', [App\Http\Controllers\ResponsibleController::class, 'index']);
+    Route::post('/responsible/create', [App\Http\Controllers\ResponsibleController::class, 'create']);
+    Route::post('/responsible/edit', [App\Http\Controllers\ResponsibleController::class, 'update']);
+    Route::post('/responsible/delete', [App\Http\Controllers\ResponsibleController::class, 'delete']);
 });
 
 //

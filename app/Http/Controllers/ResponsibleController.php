@@ -7,6 +7,7 @@ use App\Http\Requests\Person\PersonUpdateRequest;
 use App\Models\Person;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ResponsibleController extends Controller
 {
@@ -19,23 +20,36 @@ class ResponsibleController extends Controller
     public function create(PersonCreateRequest $request)
     {
         try {
-            $responsible = Person::create([
+            DB::beginTransaction();
+            $user = User::create([
+                'email' => $request->input('email'),
+                'password' => bcrypt($request->input('file_number')),
+                'rol_id' => 4,
+            ]);
+
+            Person::create([
                 'name' => $request->input('name'),
                 'lastname' => $request->input('lastname'),
                 'address' => $request->input('address'),
                 'phone' => $request->input('phone'),
-                'file_number' => $request->input('file_number')
+                'file_number' => $request->input('file_number'),
+                'user_id' => $user->id,
             ]);
+
+            $user = User::where('email', $request->input('email'))->with('Person')->first();
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Responsable creado correctamente',
-                'data' => $responsible
+                'message' => 'Responsable y usuario creados correctamente',
+                'data' => $user
             ], 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
-                'title' => 'Error al crear el responsable',
+                'title' => 'Error al crear el responsable o el usuario',
                 'message' => 'Intente nuevamente o comuníquese para soporte',
                 'error' => $e->getMessage()
             ], 400);
@@ -52,8 +66,9 @@ class ResponsibleController extends Controller
     public function update(PersonUpdateRequest $request)
     {
         try {
-            $student = Person::findOrFail($request->input('id'));
-            $student->update([
+            DB::beginTransaction();
+            $responsible = Person::findOrFail($request->input('id'));
+            $responsible->update([
                 'name' => $request->input('name'),
                 'lastname' => $request->input('lastname'),
                 'address' => $request->input('address'),
@@ -61,15 +76,57 @@ class ResponsibleController extends Controller
                 'file_number' => $request->input('file_number'),
             ]);
 
+            $user = $responsible->User;
+            $user->update([
+                'email' => $request->input('email'),
+            ]);
+
+            if ($request->input('password')) {
+                $user->update([
+                    'password' => bcrypt($request->input('password')),
+                ]);
+            }
+            DB::commit();
+            $user = User::where('email', $request->input('email'))->with('Person')->first();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Responsable editado correctamente',
-                'data' => $student
+                'data' => $user
             ], 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'title' => 'Error al editar el responsable',
+                'message' => 'Intente nuevamente o comuníquese para soporte',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function delete(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $responsible = Person::findOrFail($request->input('id'));
+            $user = $responsible->User;
+
+            $responsible->delete();
+            $user->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Responsable y usuario eliminado correctamente',
+                'data' => $request->input('id')
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'title' => 'Error al eliminar el responsable o el usuario',
                 'message' => 'Intente nuevamente o comuníquese para soporte',
                 'error' => $e->getMessage()
             ], 400);
