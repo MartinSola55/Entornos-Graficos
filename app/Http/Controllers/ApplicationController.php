@@ -6,6 +6,7 @@ use App\Http\Requests\Application\ApplicationCreateRequest;
 use App\Http\Requests\Application\ApplicationUpdateRequest;
 use App\Models\Application;
 use App\Models\Person;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -21,8 +22,17 @@ class ApplicationController extends Controller
         return view('applications.index', compact('applications'));
     }
 
+    public function new()
+    {
+        $user = User::where('id', auth()->user()->id)->first();
+        $student = User::where('email', $user->email)->with('Person')->first();
+        $professors = User::where('rol_id', 3)->with('Person')->get();
+        return view('applications.new', compact('student', 'professors'));
+    }
+
     public function create(Request $request)
     {
+        // TODO: Enviar mail a responsable
         $today = Carbon::now(new \DateTimeZone('America/Argentina/Buenos_Aires'));
         try {
             $student = Person::where('user_id', auth()->user()->id)->first();
@@ -35,7 +45,9 @@ class ApplicationController extends Controller
             }
             $application = Application::create([
                 'student_id' => $student->id,
-                'pps_id' => $request->input('pps_id'),
+                'teacher_id' => $request->input('teacher_id'),
+                'finish_date' => $request->input('finish_date'),
+                'description' => $request->input('description'),
                 'is_finished' => false,
                 'is_approved' => false,
                 'created_at' => $today,
@@ -59,9 +71,9 @@ class ApplicationController extends Controller
 
     public function details($id)
     {
-        $application = Application::find($id);
+        $application = Application::find($id)->load('Student', 'Teacher', 'Responsible', 'WorkPlans', 'WeeklyTrackings', 'FinalReports');
 
-        return view('application.details', compact('application'));
+        return view('applications.details', compact('application'));
     }
 
     public function update(ApplicationUpdateRequest $request)

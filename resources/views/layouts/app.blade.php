@@ -160,13 +160,13 @@
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-
+                        <li class="nav-small-cap">FACULTAD</li>
+                        <li>
+                            <a class="waves-effect waves-dark" href="{{ url('/home') }}" aria-expanded="false"><i class="bi bi-house"></i><span class="hide-menu">Inicio</span></a>
+                        </li>
+                        
                         {{-- ADMIN --}}
                         @if (auth()->user()->rol_id == '1')
-                            <li class="nav-small-cap">FACULTAD</li>
-                            <li>
-                                <a class="waves-effect waves-dark" href="{{ url('/home') }}" aria-expanded="false"><i class="bi bi-house"></i><span class="hide-menu">Inicio</span></a>
-                            </li>
                             <li>
                                 <a class="waves-effect waves-dark" href="{{ url('/application/index') }}" aria-expanded="false"><i class="bi bi-file-text"></i><span class="hide-menu">Solicitudes</span></a>
                             </li>
@@ -176,6 +176,11 @@
                                     <li><a href="{{ url('/teacher/index') }}">Docentes</a></li>
                                     <li><a href="{{ url('/responsible/index') }}">Responsables</a></li>
                                 </ul>
+                            </li>
+                        {{-- ESTUDIANTE --}}
+                        @elseif(auth()->user()->rol_id == '2')
+                            <li>
+                                <a class="waves-effect waves-dark" href="{{ url('/application/index') }}" aria-expanded="false"><i class="bi bi-file-text"></i><span class="hide-menu">Solicitudes</span></a>
                             </li>
                         @endif
                     </ul>
@@ -191,7 +196,7 @@
 
         @auth
             <footer class="footer">
-                © {{ $today->format('Y') }} - Consulta de horarios
+                © {{ $today->format('Y') }} - SYSACAD
             </footer>
         @endauth
     </div>

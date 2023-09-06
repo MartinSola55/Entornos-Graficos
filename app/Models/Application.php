@@ -15,10 +15,10 @@ class Application extends Model
         'student_id',
         'responsible_id',
         'teacher_id',
-        'pps_id',
         'finish_date',
         'is_finished',
         'observation',
+        'description',
         'is_approved',
     ];
 

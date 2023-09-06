@@ -30,7 +30,12 @@
             <div class="col-lg-12">
                 <div class="card shadow">
                     <div class="card-body">
-                        <h2 class="card-title">Listado de solicitudes</h4>
+                        <div class="d-flex flex-row justify-content-between">
+                            <h2 class="card-title">Listado de solicitudes</h2>
+                            @if(auth()->user()->rol_id == '2')
+                            <a href="{{ route('application.new') }}" class="btn btn-info btn-rounded waves-effect waves-light m-t-10 float-right">Nueva solicitud</a>
+                            @endif
+                        </div>
                         <div class="table-responsive m-t-10">
                             <table id="DataTable" class="table table-bordered table-striped">
                                 <thead>
@@ -47,13 +52,17 @@
                                 </thead>
                                 <tbody id="table_body">
                                     @foreach ($applications as $app)
-                                        <tr>
+                                        <tr data-id="{{ $app->id }}" class="clickable" data-url="/application/details" >
                                             <td>{{ $app->Student->lastname }}, {{ $app->Student->name }}</td>
+                                            @if ( $app->Responsible == null)
+                                            <td>-</td>
+                                            @else
                                             <td>{{ $app->Responsible->lastname }}, {{ $app->Responsible->name }}</td>
+                                            @endif
                                             <td>{{ $app->Teacher->lastname }}, {{ $app->Teacher->name }}</td>
                                             <td>{{ $app->description }}</td>
-                                            <td>{{ $app->finish_date ? $app->finish_date->format('d/m/Y') : "-" }}</td>
-                                            <td>{{ $app->observation }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($app->finish_date)->format('d/m/Y') }}</td>
+                                            <td>{{ $app->observation != null ? $app->observation : "-" }}</td>
                                             <td class="text-center">
                                                 @if ( $app->is_finished == true)
                                                     <i class="bi bi-check2" style="font-size: 1.5rem"></i>
@@ -82,7 +91,6 @@
     <script>
         $('#DataTable').DataTable({
             "language": {
-                // "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" // La url reemplaza todo al español
                 "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ solicitudes",
                 "sInfoEmpty": "Mostrando 0 a 0 de 0 solicitudes",
                 "sInfoFiltered": "(filtrado de _MAX_ solicitudes en total)",
@@ -97,7 +105,22 @@
                 },
             },
         });
+
+        $(document).on("click", ".clickable", function () {
+            let url = $(this).data('url');
+            let id = $(this).data('id');
+            window.location.href = url + "/" + id;
+        });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        .clickable {
+            cursor: pointer;
+        }
+        .clickable:hover {
+            background-color: #dce5ff !important;
+        }
+    </style>
 @endsection

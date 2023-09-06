@@ -51,6 +51,8 @@ Route::middleware(['auth'])->group(function () {
 
     // SOLICITUDES
     Route::get('/application/index', [App\Http\Controllers\ApplicationController::class, 'index']);
+    Route::get('/application/new', [App\Http\Controllers\ApplicationController::class, 'new'])->name('application.new');
+    Route::get('/application/details/{id}', [App\Http\Controllers\ApplicationController::class, 'details']);
     Route::post('/application/create', [App\Http\Controllers\ApplicationController::class, 'create']);
 });
 

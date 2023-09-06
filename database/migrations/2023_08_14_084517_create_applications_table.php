@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('persons');
             $table->foreignId('responsible_id')->nullable()->constrained('persons');
             $table->foreignId('teacher_id')->nullable()->constrained('persons');
-            $table->dateTime('finish_date')->nullable();
+            $table->dateTime('start_date');
+            $table->dateTime('finish_date');
             $table->boolean('is_finished')->default(true);
             $table->boolean('is_approved')->default(false);
             $table->string('description');
