@@ -19,19 +19,59 @@ class ApplicationController extends Controller
 {
     public function index()
     {
-        if (auth()->user()->rol_id == 1) {
-            $applications = Application::all();
-        } else {
-            $applications = Application::where('student_id', auth()->user()->Person->id)->get();
+        try {
+            if (auth()->user()->rol_id == 1) {
+                $applications = Application::all();
+            } else {
+                $applications = Application::where('student_id', auth()->user()->Person->id)->get();
+            }
+            return view('applications.index', compact('applications'));
+        } catch (\Exception $e) {
+            $error = new \stdClass();
+            $error->code = 500;
+            $error->message = 'Error al cargar la página';
+            return view('error', compact('error'));
         }
-        return view('applications.index', compact('applications'));
     }
 
     public function new()
     {
-        $user = User::where('id', auth()->user()->id)->first();
-        $student = User::where('email', $user->email)->with('Person')->first();
-        return view('applications.new', compact('student'));
+        try {
+            $user = User::where('id', auth()->user()->id)->first();
+            if ($user->rol_id != 2) {
+                $error = new \stdClass();
+                $error->code = 403;
+                $error->message = 'Para poder crear una solicitud deber ser un estudiante';
+                return view('error', compact('error'));
+            }
+            $student = User::where('email', $user->email)->with('Person')->first();
+            return view('applications.new', compact('student'));
+        } catch (\Exception $e) {
+            $error = new \stdClass();
+            $error->code = 500;
+            $error->message = 'Error al cargar la página';
+            return view('error', compact('error'));
+        }
+    }
+
+    public function details($id)
+    {
+        try {
+            $application = Application::find($id)->load('Student', 'Teacher', 'Responsible', 'WorkPlans', 'WeeklyTrackings', 'FinalReports');
+            $user = User::where('id', auth()->user()->id)->first();
+            if ($user->rol_id != 1 && $user->id != $application->student_id) {
+                $error = new \stdClass();
+                $error->code = 403;
+                $error->message = 'No está autorizado a ver esta solicitud';
+                return view('error', compact('error'));
+            }
+            return view('applications.details', compact('application'));
+        } catch (\Exception $e) {
+            $error = new \stdClass();
+            $error->code = 500;
+            $error->message = 'Error al cargar la página';
+            return view('error', compact('error'));
+        }
     }
 
     public function create(Request $request)
@@ -95,13 +135,6 @@ class ApplicationController extends Controller
                 'error' => $e->getMessage()
             ], 400);
         }
-    }
-
-    public function details($id)
-    {
-        $application = Application::find($id)->load('Student', 'Teacher', 'Responsible', 'WorkPlans', 'WeeklyTrackings', 'FinalReports');
-
-        return view('applications.details', compact('application'));
     }
 
     public function update(ApplicationUpdateRequest $request)
