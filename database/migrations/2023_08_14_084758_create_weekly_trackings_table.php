@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('weekly_trackings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('application_id')->constrained('applications');
-            $table->binary('file');
+            $table->string('file_path');
             $table->boolean('is_accepted')->default(false);
             $table->string('observation')->nullable();
             $table->timestamps();

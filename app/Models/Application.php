@@ -15,6 +15,7 @@ class Application extends Model
         'student_id',
         'responsible_id',
         'teacher_id',
+        'start_date',
         'finish_date',
         'is_finished',
         'observation',

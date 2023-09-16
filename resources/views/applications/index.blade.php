@@ -59,7 +59,11 @@
                                             @else
                                             <td>{{ $app->Responsible->lastname }}, {{ $app->Responsible->name }}</td>
                                             @endif
+                                            @if ( $app->Teacher == null)
+                                            <td>-</td>
+                                            @else
                                             <td>{{ $app->Teacher->lastname }}, {{ $app->Teacher->name }}</td>
+                                            @endif
                                             <td>{{ $app->description }}</td>
                                             <td>{{ \Carbon\Carbon::parse($app->finish_date)->format('d/m/Y') }}</td>
                                             <td>{{ $app->observation != null ? $app->observation : "-" }}</td>

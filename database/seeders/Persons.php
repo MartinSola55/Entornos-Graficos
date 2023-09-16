@@ -39,5 +39,14 @@ class Persons extends Seeder
             'file_number' => '47771',
             'user_id' => 3,
         ]);
+
+        Person::create([
+            'name' => 'Daniela',
+            'lastname' => 'Díaz',
+            'address' => 'Zeballos 1531',
+            'phone' => '342850371',
+            'file_number' => '28730',
+            'user_id' => 4,
+        ]);
     }
 }

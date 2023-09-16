@@ -15,6 +15,8 @@
     <!-- Datepicker -->
     <link href="{{ asset('plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css') }}" rel="stylesheet">
 
+    <link href="{{ asset('plugins/dropify/dist/css/dropify.min.css') }}" rel="stylesheet" >
+
     <!-- Switchery -->
     <script src="{{ asset('plugins/switchery/dist/switchery.min.js') }}"></script>
     <!-- Datepicker -->
@@ -38,7 +40,7 @@
                 <h3 class="text-themecolor m-b-0 m-t-0">Solicitudes</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ url('home') }}">Inicio</a></li>
-                    <li class="breadcrumb-item"><a href="{{ url('/applications/index') }}">Solicitudes</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url('/application/index') }}">Solicitudes</a></li>
                     <li class="breadcrumb-item active">Nueva</li>
                 </ol>
             </div>
@@ -57,8 +59,6 @@
                         <h6 class="card-subtitle mb-0">{{ $today->format('d/m/Y') }}</h6>
                         <form action="/application/create" class="tab-wizard wizard-circle" id="form_data" method="POST">
                             @csrf
-                            <input name="student_id" value="{{ $student->Person->id }}" type="hidden" />
-                            <input name="finish_date" value="" type="hidden" />
                             <!-- Step 1 -->
                             <h6>Alumno</h6>
                             <section>
@@ -140,48 +140,36 @@
                                 <h3 class="box-title">Datos de la PPS</h3>
                                 <hr class="m-t-0 m-b-20">
                                 <div class="row col-12 m-0 p-0">
-                                    <!-- Date -->
-                                    <div class="col-12 col-md-4 mb-3">
-                                        <label for="DatePicker" class="mb-0">Fecha de finalización</label>
-                                        <input name="DatePicker" id="DatePicker" class="form-control" type="text" placeholder="dd/mm/aaaa" />
+                                    <!-- Date from -->
+                                    <div class="col-12 col-md-6 mb-3">
+                                        <label for="DatePickerFrom" class="mb-0">Fecha de inicio</label>
+                                        <input name="DatePickerFrom" id="DatePickerFrom" class="form-control" type="text" placeholder="dd/mm/aaaa" />
+                                    </div>
+                                    
+                                    <!-- Date to -->
+                                    <div class="col-12 col-md-6 mb-3">
+                                        <label for="DatePickerTo" class="mb-0">Fecha de finalización</label>
+                                        <input name="DatePickerFrom" id="DatePickerTo" class="form-control" type="text" placeholder="dd/mm/aaaa" disabled />
                                     </div>
 
                                     <!-- Description -->
-                                    <div class="col-12 col-md-8 mb-3">
+                                    <div class="col-12 mb-3">
                                         <label for="description" class="mb-0">Descripción</label>
                                         <textarea id="description" name="description" class="form-control" style="height: 150px"></textarea>
                                     </div>
                                 </div>
                             </section>
                             <!-- Step 3 -->
-                            <h6>Profesor</h6>
+                            <h6>Planes de trabajo</h6>
                             <section>
-                                <h3 class="box-title">Profesor</h3>
+                                <h3 class="box-title">Archivos</h3>
                                 <hr class="m-t-0 m-b-20">
                                 <div class="row col-12 m-0 p-0">
-                                    <div class="table-responsive">
-                                        <table id="DataTable" class="table table-bordered table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Nombre</th>
-                                                    <th>Teléfono</th>
-                                                    <th>Email</th>
-                                                    <th>Seleccionar</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="table_body">
-                                                @foreach ($professors as $professor)
-                                                    <tr data-id="{{ $professor->Person->id }}" >
-                                                        <td>{{ $professor->Person->lastname }}, {{ $professor->Person->name }}</td>
-                                                        <td>{{ $professor->Person->phone }}</td>
-                                                        <td>{{ $professor->email }}</td>
-                                                        <td class="text-center">
-                                                            <input type="radio" name="teacher_id" value="{{ $professor->Person->id }}" id="professor_{{ $professor->Person->id }}" class="check" data-radio="iradio_square-purple" />
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h2 class="card-title">Subir plan de trabajo</h2>
+                                            <input name="file" type="file" class="dropify" accept=".pdf" />
+                                        </div>
                                     </div>
                                 </div>
                             </section>
@@ -201,28 +189,6 @@
 
 
     <script>
-        $(document).ready(function () {
-            $('#DataTable').DataTable({
-                scrollY: '30vh',
-                scrollCollapse: true,
-                paging: false,
-                "language": {
-                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ profesores",
-                    "sInfoEmpty": "Mostrando 0 a 0 de 0 profesores",
-                    "sInfoFiltered": "(filtrado de _MAX_ profesores en total)",
-                    "emptyTable": 'No hay profesores que coincidan con la búsqueda',
-                    "sLengthMenu": "Mostrar _MENU_ profesores",
-                    "sSearch": "Buscar:",
-                    "oPaginate": {
-                        "sFirst": "Primero",
-                        "sLast": "Último",
-                        "sNext": "Siguiente",
-                        "sPrevious": "Anterior",
-                    },
-                },
-            });
-        });
-
         $(".tab-wizard").steps({
             headerTag: "h6",
             bodyTag: "section",
@@ -242,17 +208,41 @@
         });
 
         $(document).ready(function () {
-            // Establecer el idioma de Moment.js en español
             moment.locale('es');
 
-            // Configurar bootstrapMaterialDatePicker con el formato y opciones deseadas
-            $('#DatePicker').bootstrapMaterialDatePicker({
+            $('#DatePickerFrom').bootstrapMaterialDatePicker({
                 minDate: moment(),
+                maxDate: moment().add(1, 'years'),
                 time: false,
                 format: 'DD/MM/YYYY',
                 cancelText: 'Cancelar',
                 weekStart: 1,
                 lang: 'es',
+            });
+            $('#DatePickerTo').bootstrapMaterialDatePicker({
+                time: false,
+                format: 'DD/MM/YYYY',
+                cancelText: 'Cancelar',
+                weekStart: 1,
+                lang: 'es',
+            });
+
+            $('#DatePickerFrom').on('change', function () {
+                $('#DatePickerTo').bootstrapMaterialDatePicker('setMinDate', $(this).val());
+                $('#DatePickerTo').prop('disabled', false);
+            });
+
+            let drEvent = $('.dropify').dropify({
+                messages: {
+                    'default': 'Arrastre el archivo aquí o haga clic',
+                    'replace': 'Arrastre el archivo aquí o haga clic para reemplazar',
+                    'remove':  'Eliminar',
+                    'error':   'Ooops, ocurrió un error.'
+                }
+            });
+
+            drEvent.on('dropify.errors', function(event, element) {
+                console.log('Has Errors');
             });
         });
     </script>
@@ -272,24 +262,27 @@
         };
 
         function validatePPS() {
-            let date = $("input[name='DatePicker']").val();
+            let dateFrom = $("input[name='DatePickerFrom']").val();
+            let dateTo = $("input[name='DatePickerTo']").val();
             let description = $("textarea[name='description']").val();
 
-            if (date == "") return fireAlert("Debes ingresar una fecha de finalización");
+            if (dateFrom == "") return fireAlert("Debes ingresar una fecha de inicio");
+            if (dateTo == "") return fireAlert("Debes ingresar una fecha de finalización");
             if (description == "") return fireAlert("Debes ingresar una descripción");
-
+            if (dateFrom > dateTo) return fireAlert("La fecha de inicio no puede ser mayor a la fecha de finalización");
+            
             return true;
         }
 
-        function validateTeacher() {
-            let check = $("#DataTable tbody tr td input[type='radio']:checked");
-            if (check.length <= 0) return fireAlert("Debes seleccionar un profesor");
+        function validateFile() {
+            let file = $("input[name='file']").val();
+            if (!file) return fireAlert("Debes subir un plan de trabajo");
             return true;
         }
 
         function validateData() {
             if (!validatePPS()) return false;
-            if (!validateTeacher()) return false;
+            if (!validateFile()) return false;
             return true;
         }
 
@@ -302,14 +295,21 @@
 
         function sendForm() {
             let form = $("#form_data");
-            $('#finish_date').val("");
-            $('#finish_date').val(formatDate($('#DatePicker').val()));
+            let formData = new FormData();
+            let file = $("input[name='file']")[0].files[0];
+            formData.append('start_date', formatDate($('#DatePickerFrom').val()));
+            formData.append('finish_date', formatDate($('#DatePickerTo').val()));
+            formData.append('description', $("#description").val());
+            formData.append('_token', $("input[name='_token']").val());
+            formData.append('file', file);
 
             // Enviar solicitud AJAX
             $.ajax({
-                url: $(form).attr('action'), // Utiliza la ruta del formulario
-                method: $(form).attr('method'), // Utiliza el método del formulario
-                data: $(form).serialize(), // Utiliza los datos del formulario
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (response) {
                     Swal.fire({
                         title: response.message,
@@ -318,12 +318,11 @@
                         confirmButtonColor: '#1e88e5',
                         confirmButtonText: 'OK',
                         allowOutsideClick: false,
-                    })
-                        .then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = window.location.origin;
-                            }
-                        });
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = window.location.origin;
+                        }
+                    });
                 },
                 error: function (errorThrown) {
                     Swal.fire({
@@ -336,6 +335,9 @@
             });
         }
     </script>
+
+    <!-- jQuery file upload -->
+    <script src="{{ asset('plugins/dropify/dist/js/dropify.min.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection

@@ -13,7 +13,7 @@ class WorkPlan extends Model
 
     protected $fillable = [
         'application_id',
-        'file',
+        'file_path',
         'is_accepted',
     ];
 

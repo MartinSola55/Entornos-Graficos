@@ -41,7 +41,7 @@
             <div class="col-lg-12">
                 <div class="card shadow">
                     <div class="card-body">
-                        <h4 class="card-title">Estudiantes</h4>
+                        <h4 class="card-title">Personas</h4>
                         <div class="table-responsive m-t-20">
                             <table class="table stylish-table">
                                 <thead>
