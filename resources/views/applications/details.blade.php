@@ -127,7 +127,14 @@
                         <div class="card">
                             <div class="card-body">
                                 <h2 class="card-title">Subir seguimientos semanales</h2>
-                                <input type="file" class="dropify" />
+                                <form id="form-uploadWT" action="/application/uploadWeeklyTracking" method="post">
+                                    @csrf
+                                    <input name="file" type="file" class="dropify" accept=".pdf" data-max-file-size="2M" />
+                                    <input type="hidden" name="application_id" value="{{ $application->id }}">
+                                    <div class="d-flex justify-content-end mt-2">
+                                        <button onclick="uploadWT()" class="btn btn-secondary waves-effect waves-light btn-upload" type="button" style="display: none;"><span class="btn-label"><i class="bi bi-upload"></i></span>Subir</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -152,13 +159,61 @@
                     'replace': 'Arrastre el archivo aquí o haga clic para reemplazar',
                     'remove':  'Eliminar',
                     'error':   'Ooops, ocurrió un error.'
+                },
+                error: {
+                    'fileSize': 'El tamaño del archivo es demasiado grande. Máximo 2MB.',
                 }
             });
 
-            drEvent.on('dropify.errors', function(event, element) {
-                console.log('Has Errors');
+            drEvent.on('dropify.afterClear', function(event, element) {
+                $('.btn-upload').hide();
+            });
+            drEvent.on('dropify.errors', function(event, element){
+                $('.btn-upload').hide();
             });
         });
+    </script>
+
+    <script>
+        $('input[type="file"]').change(function () {
+            if ($(this).get(0).files.length > 0) {
+                $('.btn-upload').show();
+            } else {
+                $('.btn-upload').hide();
+            }
+        });
+
+        function uploadWT() {
+            let form = $("#form-uploadWT");
+            let formData = new FormData();
+            let file = $("#form-uploadWT input[name='file']")[0].files[0];
+            formData.append('application_id', $("#form-uploadWT input[name='application_id']").val());
+            formData.append('_token', $("#form-uploadWT input[name='_token']").val());
+            formData.append('file', file);
+
+            $.ajax({
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: response.message,
+                        confirmButtonColor: '#1e88e5',
+                    });
+                },
+                error: function (errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: errorThrown.responseJSON.title,
+                        text: errorThrown.responseJSON.message,
+                        confirmButtonColor: '#1e88e5',
+                    });
+                }
+            });
+        }
     </script>
 
     <!-- jQuery file upload -->

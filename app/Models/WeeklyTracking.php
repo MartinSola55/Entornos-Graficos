@@ -13,7 +13,7 @@ class WeeklyTracking extends Model
 
     protected $fillable = [
         'application_id',
-        'file',
+        'file_path',
         'is_accepted',
     ];
 

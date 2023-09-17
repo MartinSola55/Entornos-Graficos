@@ -168,7 +168,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h2 class="card-title">Subir plan de trabajo</h2>
-                                            <input name="file" type="file" class="dropify" accept=".pdf" />
+                                            <input name="file" type="file" class="dropify" accept=".pdf" data-max-file-size="2M" />
                                         </div>
                                     </div>
                                 </div>
@@ -238,6 +238,9 @@
                     'replace': 'Arrastre el archivo aquí o haga clic para reemplazar',
                     'remove':  'Eliminar',
                     'error':   'Ooops, ocurrió un error.'
+                },
+                error: {
+                    'fileSize': 'El tamaño del archivo es demasiado grande. Máximo 2MB.',
                 }
             });
 

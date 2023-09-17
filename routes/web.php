@@ -54,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/application/new', [App\Http\Controllers\ApplicationController::class, 'new'])->name('application.new');
     Route::get('/application/details/{id}', [App\Http\Controllers\ApplicationController::class, 'details']);
     Route::get('/application/downloadWorkPlan/{id}', [App\Http\Controllers\ApplicationController::class, 'downloadWorkPlan']);
+    Route::post('/application/uploadWeeklyTracking', [App\Http\Controllers\ApplicationController::class, 'uploadWeeklyTracking']);
     Route::post('/application/create', [App\Http\Controllers\ApplicationController::class, 'create']);
 });
 
