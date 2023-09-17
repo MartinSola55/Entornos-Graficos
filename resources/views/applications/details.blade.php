@@ -115,7 +115,7 @@
                             </table>
                             <hr class="m-t-0 m-b-20">
                             <form action="/application/downloadWorkPlan/{{ $application->id }}" method="GET">
-                                <button class="btn btn-secondary waves-effect waves-light" type="submit"><span class="btn-label"><i class="bi bi-arrow-down-square"></i></span>Plan de trabajo</button>
+                                <button class="btn btn-secondary waves-effect waves-light" type="submit"><span class="btn-label"><i class="bi bi-file-earmark-arrow-down"></i></span>Plan de trabajo</button>
                             </form>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                     <div class="col-12 col-sm-6">
                         <div class="card">
                             <div class="card-body">
-                                <h2 class="card-title">Subir seguimientos semanales</h2>
+                                <h2 class="card-title">Subir seguimiento semanal</h2>
                                 <form id="form-uploadWT" action="/application/uploadWeeklyTracking" method="post">
                                     @csrf
                                     <input name="file" type="file" class="dropify" accept=".pdf" data-max-file-size="2M" />
@@ -145,6 +145,70 @@
                                 <input type="file" class="dropify" disabled />
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title">Seguimientos semanales</h2>
+                        <hr>
+                        <!-- TIMELINE DE SEGUIMIENTOS -->
+                        <ul class="timeline">
+                            <?php $contador = 0;?>
+                            @foreach ($application->WeeklyTrackings->sortBy('created_at') as $wt)
+                                <?php $contador++; ?>
+                                <li class="@if($contador % 2 != 0) timeline-inverted @endif">
+                                    <div class="timeline-badge" style="background-color: #6c757d"><i class="bi bi-file-text"></i></div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h3 class="timeline-title name-element text-center">Archivo #{{ $contador }}</h3>
+                                        </div>
+                                        <hr>
+                                        <div class="timeline-body">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <p><b class="font-weight-bold">Fecha de subida:</b> {{ $wt->created_at->format('d/m/Y') }}</p>
+                                                    @if ($wt->is_accepted == true)
+                                                        <td><span class="label label-success">Aceptado</span></td>
+                                                    @else
+                                                        <td><span class="label label-warning">Sin aceptar</span></td>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            
+                                            <hr>
+                                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                                <!-- Download -->
+                                                <form action="/application/downloadWeeklyTracking/{{ $wt->id }}" method="GET">
+                                                    <button class="btn btn-secondary waves-effect waves-light" type="submit"><span class="btn-label"><i class="bi bi-file-earmark-arrow-down"></i></span>Descargar</button>
+                                                </form>
+
+                                                <!-- Delete -->
+                                                @if ($wt->is_accepted == false)
+                                                    <form id="form-deleteWT_{{ $wt->id }}" action="{{ url('/application/deleteWeeklyTracking') }}" method="POST">
+                                                        @csrf
+                                                        <input type="hidden" name="id" value="{{ $wt->id }}">
+                                                        <button onclick="deleteWT({{ $wt->id }})" type="button" class="btn btn-sm btn-danger btn-rounded px-3">Eliminar</button>
+                                                    </form>
+                                                @endif
+                                            </div>
+
+                                            @if ($wt->is_accepted == false && auth()->user()->rol_id == 3)
+                                            <hr>
+                                            <div class="d-flex flex-row justify-content-end">
+                                                <form id="form-acceptWT_{{ $wt->id }}" action="{{ url('/application/acceptWeeklyTracking') }}" method="POST">
+                                                    @csrf
+                                                    <input type="hidden" name="id" value="{{ $wt->id }}">
+                                                    <button onclick="acceptWT({{ $wt->id }})" type="button" class="btn btn-sm btn-info btn-rounded px-3">Aceptar</button>
+                                                </form>
+                                            </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -202,6 +266,9 @@
                         icon: 'success',
                         title: response.message,
                         confirmButtonColor: '#1e88e5',
+                        allowOutsideClick: false,
+                    }).then(() => {
+                        location.reload();
                     });
                 },
                 error: function (errorThrown) {
@@ -210,6 +277,80 @@
                         title: errorThrown.responseJSON.title,
                         text: errorThrown.responseJSON.message,
                         confirmButtonColor: '#1e88e5',
+                    });
+                }
+            });
+        }
+
+        function deleteWT(id) {
+            let form = $(`#form-deleteWT_${id}`);
+            Swal.fire({
+                title: "Esta acción no se puede revertir",
+                text: '¿Seguro deseas eliminar este archivo?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Eliminar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger waves-effect waves-light px-3 py-2',
+                    cancelButton: 'btn btn-default waves-effect waves-light px-3 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: $(form).attr('action'),
+                        method: $(form).attr('method'),
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: response.message,
+                                confirmButtonColor: '#1e88e5',
+                                allowOutsideClick: false,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(errorThrown) {
+                            SwalError(errorThrown.responseJSON.message);
+                        }
+                    });
+                }
+            });
+        }
+
+        function acceptWT(id) {
+            let form = $(`#form-acceptWT_${id}`);
+            Swal.fire({
+                title: "Esta acción no se puede revertir",
+                text: '¿Seguro deseas aceptar este seguimiento?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-info waves-effect waves-light px-3 py-2',
+                    cancelButton: 'btn btn-default waves-effect waves-light px-3 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: $(form).attr('action'),
+                        method: $(form).attr('method'),
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: response.message,
+                                confirmButtonColor: '#1e88e5',
+                                allowOutsideClick: false,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(errorThrown) {
+                            SwalError(errorThrown.responseJSON.message);
+                        }
                     });
                 }
             });

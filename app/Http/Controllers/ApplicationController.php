@@ -221,45 +221,4 @@ class ApplicationController extends Controller
             ], 400);
         }
     }
-
-    public function uploadWeeklyTracking(Request $request) {
-        try {
-            $application = Application::find($request->input('application_id'));
-            $student = Person::where('user_id', auth()->user()->id)->first();
-            if ($application->student_id != $student->id) {
-                return response()->json([
-                    'success' => false,
-                    'title' => 'Error al subir el seguimiento semanal',
-                    'message' => 'No está autorizado a realizar esta acción'
-                ], 400);
-            }
-
-            $file = $request->file('file');
-            if ($file->isValid()) {
-                $path = $file->store('public/weekly_trackings');
-                WeeklyTracking::create([
-                    'application_id' => $application->id,
-                    'file_path' => $path,
-                    'is_accepted' => false
-                ]);
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Seguimiento semanal subido correctamente',
-                    'data' => $application
-                ], 201);
-            }
-            return response()->json([
-                'success' => false,
-                'title' => 'Error al subir el seguimiento semanal',
-                'message' => 'El archivo no es válido'
-            ], 400);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'title' => 'Error al subir el seguimiento semanal',
-                'message' => 'Intente nuevamente o comuníquese para soporte',
-                'error' => $e->getMessage()
-            ], 400);
-        }
-    }
 }
