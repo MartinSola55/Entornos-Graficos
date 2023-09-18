@@ -13,13 +13,13 @@ class FinalReport extends Model
 
     protected $fillable = [
         'application_id',
-        'file',
+        'file_path',
         'is_accepted',
         'observation',
     ];
 
     public function Application()
     {
-        return $this->belongsTo(Application::class, 'application_id');
+        return $this->belongsTo(Application::class);
     }
 }

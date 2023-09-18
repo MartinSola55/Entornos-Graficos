@@ -1,6 +1,7 @@
 @php
     use Carbon\Carbon;
     $today = Carbon::now(new \DateTimeZone('America/Argentina/Buenos_Aires'));
+    $application_end_date = Carbon::parse($application->finish_date);
 @endphp
 @extends('layouts.app')
 
@@ -114,40 +115,66 @@
                                 </tbody>    
                             </table>
                             <hr class="m-t-0 m-b-20">
-                            <form action="/application/downloadWorkPlan/{{ $application->id }}" method="GET">
-                                <button class="btn btn-secondary waves-effect waves-light" type="submit"><span class="btn-label"><i class="bi bi-file-earmark-arrow-down"></i></span>Plan de trabajo</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-lg-6">
-                <div class="row">
-                    <div class="col-12 col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h2 class="card-title">Subir seguimiento semanal</h2>
-                                <form id="form-uploadWT" action="/application/uploadWeeklyTracking" method="post">
-                                    @csrf
-                                    <input name="file" type="file" class="dropify" accept=".pdf" data-max-file-size="2M" />
-                                    <input type="hidden" name="application_id" value="{{ $application->id }}">
-                                    <div class="d-flex justify-content-end mt-2">
-                                        <button onclick="uploadWT()" class="btn btn-secondary waves-effect waves-light btn-upload" type="button" style="display: none;"><span class="btn-label"><i class="bi bi-upload"></i></span>Subir</button>
-                                    </div>
+                            <div class="d-flex flex-row justify-content-between">
+                                <form action="/application/downloadWorkPlan/{{ $application->id }}" method="GET">
+                                    <button class="btn btn-secondary waves-effect waves-light" type="submit"><span class="btn-label"><i class="bi bi-file-earmark-arrow-down"></i></span>Plan de trabajo</button>
                                 </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h2 class="card-title">Subir reporte final</h2>
-                                <input type="file" class="dropify" disabled />
+
+                                @if ($application->FinalReport != null)
+                                    <form action="/application/downloadFinalReport/{{ $application->id }}" method="GET">
+                                        <button class="btn btn-secondary waves-effect waves-light" type="submit"><span class="btn-label"><i class="bi bi-file-earmark-arrow-down"></i></span>Reporte final</button>
+                                    </form>
+                                @endif
+
+                                @if ($application->responsible_id === null && auth()->user()->rol_id == 4 && $application->is_finished === false)
+                                    <form id="form-takeApplication" action="/application/takeApplication/{{ $application->id }}" method="post">
+                                        @csrf
+                                        <button id="btnResponsable" class="btn btn-info waves-effect waves-light" type="button">Tomar solicitud</button>
+                                    </form>
+                                @endif
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            @if (auth()->user()->rol_id == 2)
+                <div class="col-12 col-lg-6">
+                    <div class="row">
+                        <div class="col-12 col-sm-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2 class="card-title" style="@if ($today >= $application_end_date) text-decoration: line-through; @endif">Subir seguimiento semanal</h2>
+                                    <form id="form-uploadWT" action="/application/uploadWeeklyTracking" method="post">
+                                        @csrf
+                                        <input name="file" type="file" class="dropify" accept=".pdf" data-max-file-size="2M" @if ($today >= $application_end_date) disabled @endif />
+                                        <input type="hidden" name="application_id" value="{{ $application->id }}">
+                                        <div class="d-flex justify-content-end mt-2">
+                                            <button id="btn-uploadWT" onclick="uploadWT()" class="btn btn-secondary waves-effect waves-light" type="button" style="display: none;"><span class="btn-label"><i class="bi bi-upload"></i></span>Subir</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h2 class="card-title" style="@if ($today < $application_end_date || $application->FinalReport != null) text-decoration: line-through; @endif">Subir reporte final</h2>
+                                    <form id="form-uploadFR" action="/application/uploadFinalReport" method="post">
+                                        @csrf
+                                        <input name="file" type="file" class="dropify" accept=".pdf" data-max-file-size="2M" @if ($today < $application_end_date || $application->FinalReport != null) disabled @endif />
+                                        <input type="hidden" name="application_id" value="{{ $application->id }}">
+                                        <div class="d-flex justify-content-end mt-2">
+                                            <button id="btn-uploadFR" onclick="uploadFR()" class="btn btn-secondary waves-effect waves-light btn-upload" type="button" style="display: none;"><span class="btn-label"><i class="bi bi-upload"></i></span>Subir</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
@@ -185,7 +212,7 @@
                                                 </form>
 
                                                 <!-- Delete -->
-                                                @if ($wt->is_accepted == false)
+                                                @if ($wt->is_accepted == false && auth()->user()->rol_id == 2)
                                                     <form id="form-deleteWT_{{ $wt->id }}" action="{{ url('/application/deleteWeeklyTracking') }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{ $wt->id }}">
@@ -230,21 +257,67 @@
             });
 
             drEvent.on('dropify.afterClear', function(event, element) {
-                $('.btn-upload').hide();
+                $('#btn-uploadWT').hide();
+                $('#btn-uploadFR').hide();
             });
             drEvent.on('dropify.errors', function(event, element){
-                $('.btn-upload').hide();
+                $('#btn-uploadWT').hide();
+                $('#btn-uploadFR').hide();
             });
         });
     </script>
 
     <script>
-        $('input[type="file"]').change(function () {
+        $('#form-uploadFR input[type="file"]').change(function () {
             if ($(this).get(0).files.length > 0) {
-                $('.btn-upload').show();
+                $('#btn-uploadFR').show();
             } else {
-                $('.btn-upload').hide();
+                $('#btn-uploadFR').hide();
             }
+        });
+        $('#form-uploadWT input[type="file"]').change(function () {
+            if ($(this).get(0).files.length > 0) {
+                $('#btn-uploadWT').show();
+            } else {
+                $('#btn-uploadWT').hide();
+            }
+        });
+
+        $("#btnResponsable").on("click", function() {
+            Swal.fire({
+                title: "Esta acción no se puede revertir",
+                text: '¿Seguro deseas tomar esta solicitud?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-info waves-effect waves-light px-3 py-2',
+                    cancelButton: 'btn btn-default waves-effect waves-light px-3 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let form = $("#form-takeApplication");
+                    $.ajax({
+                        url: $(form).attr('action'),
+                        method: $(form).attr('method'),
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: response.message,
+                                confirmButtonColor: '#1e88e5',
+                                allowOutsideClick: false,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(errorThrown) {
+                            SwalError(errorThrown.responseJSON.message);
+                        }
+                    });
+                }
+            });
         });
 
         function uploadWT() {
@@ -351,6 +424,41 @@
                         error: function(errorThrown) {
                             SwalError(errorThrown.responseJSON.message);
                         }
+                    });
+                }
+            });
+        }
+
+        function uploadFR() {
+            let form = $("#form-uploadFR");
+            let formData = new FormData();
+            let file = $("#form-uploadFR input[name='file']")[0].files[0];
+            formData.append('application_id', $("#form-uploadFR input[name='application_id']").val());
+            formData.append('_token', $("#form-uploadFR input[name='_token']").val());
+            formData.append('file', file);
+
+            $.ajax({
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: response.message,
+                        confirmButtonColor: '#1e88e5',
+                        allowOutsideClick: false,
+                    }).then(() => {
+                        location.reload();
+                    });
+                },
+                error: function (errorThrown) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: errorThrown.responseJSON.title,
+                        text: errorThrown.responseJSON.message,
+                        confirmButtonColor: '#1e88e5',
                     });
                 }
             });

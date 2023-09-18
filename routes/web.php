@@ -54,9 +54,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/application/new', [App\Http\Controllers\ApplicationController::class, 'new'])->name('application.new');
     Route::get('/application/details/{id}', [App\Http\Controllers\ApplicationController::class, 'details']);
     Route::get('/application/downloadWorkPlan/{id}', [App\Http\Controllers\ApplicationController::class, 'downloadWorkPlan']);
-    Route::get('/application/downloadWeeklyTracking/{id}', [App\Http\Controllers\WeeklyTrackingController::class, 'downloadWeeklyTracking']);
-    Route::post('/application/uploadWeeklyTracking', [App\Http\Controllers\WeeklyTrackingController::class, 'uploadWeeklyTracking']);
+
+    Route::get('/application/downloadWeeklyTracking/{id}', [App\Http\Controllers\WeeklyTrackingController::class, 'download']);
+    Route::post('/application/uploadWeeklyTracking', [App\Http\Controllers\WeeklyTrackingController::class, 'upload']);
     Route::post('/application/deleteWeeklyTracking', [App\Http\Controllers\WeeklyTrackingController::class, 'delete']);
     Route::post('/application/acceptWeeklyTracking', [App\Http\Controllers\WeeklyTrackingController::class, 'accept']);
+
+    Route::get('/application/downloadFinalReport/{id}', [App\Http\Controllers\FinalReportController::class, 'download']);
+    Route::post('/application/uploadFinalReport', [App\Http\Controllers\FinalReportController::class, 'upload']);
+
     Route::post('/application/create', [App\Http\Controllers\ApplicationController::class, 'create']);
+    Route::post('/application/takeApplication/{id}', [App\Http\Controllers\ResponsibleController::class, 'takeApplication']);
 });

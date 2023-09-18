@@ -21,10 +21,27 @@ class ApplicationController extends Controller
     public function index()
     {
         try {
-            if (auth()->user()->rol_id == 1) {
-                $applications = Application::all();
-            } else {
-                $applications = Application::where('student_id', auth()->user()->Person->id)->get();
+            $rol = auth()->user()->rol_id;
+            switch ($rol) {
+                case 1:
+                    $applications = Application::all();
+                    break;
+                
+                case 2:
+                    $applications = Application::where('student_id', auth()->user()->Person->id)->get();
+                    break;
+                
+                case 3:
+                    $applications = Application::where('teacher_id', auth()->user()->Person->id)->get();
+                    break;
+                
+                case 4:
+                    $applications = Application::all();
+                    break;
+                
+                default:
+                    $applications = [];
+                    break;
             }
             return view('applications.index', compact('applications'));
         } catch (\Exception $e) {
@@ -58,9 +75,9 @@ class ApplicationController extends Controller
     public function details($id)
     {
         try {
-            $application = Application::find($id)->load('Student', 'Teacher', 'Responsible', 'WorkPlans', 'WeeklyTrackings', 'FinalReports');
+            $application = Application::find($id)->load('Student', 'Teacher', 'Responsible', 'WorkPlan', 'WeeklyTrackings', 'FinalReport');
             $user = User::where('id', auth()->user()->id)->first();
-            if ($user->rol_id != 1 && $user->id != $application->student_id) {
+            if (($user->rol_id == 2 && $user->Person->id != $application->student_id) || ($user->rol_id == 3 && $user->Person->id != $application->teacher_id)) {
                 $error = new \stdClass();
                 $error->code = 403;
                 $error->message = 'No está autorizado a ver esta solicitud';

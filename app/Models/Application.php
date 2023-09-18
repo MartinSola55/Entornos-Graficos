@@ -38,9 +38,9 @@ class Application extends Model
         return $this->belongsTo(Person::class, 'teacher_id');
     }
 
-    public function FinalReports()
+    public function FinalReport()
     {
-        return $this->hasMany(FinalReport::class, 'application_id');
+        return $this->hasOne(FinalReport::class);
     }
 
     public function WeeklyTrackings()
@@ -48,8 +48,8 @@ class Application extends Model
         return $this->hasMany(WeeklyTracking::class, 'application_id');
     }
 
-    public function WorkPlans()
+    public function WorkPlan()
     {
-        return $this->hasMany(WorkPlan::class, 'application_id');
+        return $this->hasOne(WorkPlan::class);
     }
 }

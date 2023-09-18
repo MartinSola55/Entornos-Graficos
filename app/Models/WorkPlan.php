@@ -19,6 +19,6 @@ class WorkPlan extends Model
 
     public function Application()
     {
-        return $this->belongsTo(Application::class, 'application_id');
+        return $this->belongsTo(Application::class);
     }
 }

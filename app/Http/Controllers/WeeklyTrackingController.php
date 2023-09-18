@@ -67,7 +67,7 @@ class WeeklyTrackingController extends Controller
         }
     }
 
-    public function downloadWeeklyTracking($id)
+    public function download($id)
     {
         try {
             $wt = WeeklyTracking::find($id)->load('Application');
@@ -98,12 +98,12 @@ class WeeklyTrackingController extends Controller
         }
     }
 
-    public function uploadWeeklyTracking(Request $request)
+    public function upload(Request $request)
     {
         try {
             $application = Application::find($request->input('application_id'));
             $student = Person::where('user_id', auth()->user()->id)->first();
-            if ($application->student_id != $student->id) {
+            if ($application->student_id != $student->id || auth()->user()->rol_id != 2) {
                 return response()->json([
                     'success' => false,
                     'title' => 'Error al subir el seguimiento semanal',

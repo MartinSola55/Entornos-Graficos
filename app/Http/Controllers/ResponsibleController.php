@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Person\PersonCreateRequest;
 use App\Http\Requests\Person\PersonUpdateRequest;
+use App\Models\Application;
 use App\Models\Person;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -127,6 +128,48 @@ class ResponsibleController extends Controller
             return response()->json([
                 'success' => false,
                 'title' => 'Error al eliminar el responsable o el usuario',
+                'message' => 'Intente nuevamente o comuníquese para soporte',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function takeApplication($id) {
+        try {
+            $application = Application::findOrFail($id);
+            if ($application->responsible_id) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al tomar la solicitud',
+                    'message' => 'La solicitud ya fue tomada por otro responsable',
+                ], 400);
+            }
+            if ($application->is_finished) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al tomar la solicitud',
+                    'message' => 'La solicitud ya fue finalizada',
+                ], 400);
+            }
+            if (auth()->user()->rol_id != 4) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al tomar la solicitud',
+                    'message' => 'El usuario no es un responsable',
+                ], 400);
+            }
+            $application->update([
+                'responsible_id' => auth()->user()->Person->id,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Solicitud tomada correctamente'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'title' => 'Error al tomar la solicitud',
                 'message' => 'Intente nuevamente o comuníquese para soporte',
                 'error' => $e->getMessage()
             ], 400);
