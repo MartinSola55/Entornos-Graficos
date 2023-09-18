@@ -52,6 +52,42 @@
         <!-- ============================================================== -->
         <!-- Start Page Content -->
         <!-- ============================================================== -->
+
+        <!-- Modal -->
+        <div id="modalObservation" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog">
+                <form role="form" class="needs-validation" method="POST" action="{{ url('/application/editObservation') }}" id="form-observation" autocomplete="off" novalidate>
+                    @csrf
+                    <input type="hidden" name="application_id" value="{{ $application->id }}">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Editar observaciones</h4>
+                            <button type="button" class="close" id="btnCloseModal" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-column">
+                                        <div class="col-12 mb-3">
+                                            <textarea class="form-control" name="observation" style="height: 300px" required>{{ $application->observation }}</textarea>
+                                            <div class="invalid-feedback">
+                                                Por favor, ingrese una observación
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cerrar</button>
+                            <button id="btnSendObservation" type="button" class="btn btn-success waves-effect waves-light">Editar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- End Modal -->
+
         <div class="row">
             <div class="col-12 col-lg-6">
                 <div class="card">
@@ -92,7 +128,12 @@
                                         <td>{{ $application->description }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="col-4"><b class="font-weight-bold">Observaciones:</b></td>
+                                        <td class="col-4">
+                                            <b class="font-weight-bold">Observaciones:</b>
+                                            @if (auth()->user()->rol_id == 3)
+                                                <button class="btn btn-secondarry btn-sm waves-effect waves-light" type="button" data-toggle="modal" data-target="#modalObservation"><i class="bi bi-pencil-square"></i></button>
+                                            @endif
+                                        </td>
                                         <td>{{ $application->observation != null ? $application->observation : "-" }}</td>
                                     </tr>
                                     <tr>
@@ -132,7 +173,14 @@
                                         <button id="btnResponsable" class="btn btn-info waves-effect waves-light" type="button">Tomar solicitud</button>
                                     </form>
                                 @endif
+
                             </div>
+                            @if (auth()->user()->rol_id == 3 && $application->is_finished === true)
+                                <hr>
+                                <div class="d-flex justify-content-end">
+                                    <button id="btnFinish" class="btn btn-success waves-effect waves-light" type="button">Aprobar solicitud</button>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -281,6 +329,27 @@
             } else {
                 $('#btn-uploadWT').hide();
             }
+        });
+
+        $("#btnSendObservation").on("click", function() {
+            let form = $("#form-observation");
+            $.ajax({
+                url: $(form).attr('action'),
+                method: $(form).attr('method'),
+                data: $(form).serialize(),
+                success: function(response) {
+                    $("#btnCloseModal").click();
+                    Swal.fire({
+                        icon: 'success',
+                        title: response.message,
+                        confirmButtonColor: '#1e88e5',
+                        allowOutsideClick: false,
+                    });
+                },
+                error: function(errorThrown) {
+                    SwalError(errorThrown.responseJSON.message);
+                }
+            });
         });
 
         $("#btnResponsable").on("click", function() {

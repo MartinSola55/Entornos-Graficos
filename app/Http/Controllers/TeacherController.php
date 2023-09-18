@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Person\PersonCreateRequest;
 use App\Http\Requests\Person\PersonUpdateRequest;
+use App\Models\Application;
 use App\Models\Person;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -127,6 +128,35 @@ class TeacherController extends Controller
             return response()->json([
                 'success' => false,
                 'title' => 'Error al eliminar el docente o el usuario',
+                'message' => 'Intente nuevamente o comuníquese para soporte',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function editObservation(Request $request) {
+        try {
+            $application = Application::findOrFail($request->input('application_id'));
+            if (auth()->user()->rol_id == 3 && $application->teacher_id == auth()->user()->Person->id) {
+                $application->update([
+                    'observation' => $request->input('observation'),
+                ]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Observación editada correctamente'
+                ], 201);
+            }
+
+            return response()->json([
+                'success' => false,
+                'title' => 'Error al editar la observación',
+                'message' => 'No tiene permisos para editar la observación',
+            ], 400);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'title' => 'Error al editar la observación',
                 'message' => 'Intente nuevamente o comuníquese para soporte',
                 'error' => $e->getMessage()
             ], 400);
