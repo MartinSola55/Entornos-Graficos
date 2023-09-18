@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Person\PersonCreateRequest;
 use App\Http\Requests\Person\PersonUpdateRequest;
+use App\Mail\AssignTeacherEmail;
 use App\Models\Application;
 use App\Models\Person;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class ResponsibleController extends Controller
 {
@@ -201,10 +203,10 @@ class ResponsibleController extends Controller
                     'message' => 'El usuario no es un responsable',
                 ], 400);
             }
+            Mail::to($application->Student->User->email)->send(new AssignTeacherEmail($application->Student->name, $teacher->lastname . ', ' . $teacher->name, $teacher->User->email));
             $application->update([
                 'teacher_id' => $teacher->id,
             ]);
-
             return response()->json([
                 'success' => true,
                 'message' => 'Docente asignado correctamente'

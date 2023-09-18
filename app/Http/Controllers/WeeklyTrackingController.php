@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ApproveWeeklyTrackingEmail;
+use App\Mail\UploadWeeklyTrackingEmail;
 use App\Models\Application;
 use App\Models\Person;
 use App\Models\WeeklyTracking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class WeeklyTrackingController extends Controller
@@ -43,6 +46,7 @@ class WeeklyTrackingController extends Controller
     {
         try {
             $wt = WeeklyTracking::findOrFail($request->input('id'))->load('Application');
+            $application = $wt->Application;
             $rol = auth()->user()->rol_id;
             if ($rol != 3 || $wt->Application->teacher_id != auth()->user()->Person->id) {
                 return response()->json([
@@ -53,6 +57,15 @@ class WeeklyTrackingController extends Controller
             }
             $wt->is_accepted = true;
             $wt->save();
+
+            Mail::to($application->Student->User->email)->send(
+                new ApproveWeeklyTrackingEmail(
+                    $application->Student->name,
+                    $application->id,
+                    $application->Teacher->User->email
+                )
+            );
+
             return response()->json([
                 'success' => true,
                 'message' => 'Seguimiento aceptado correctamente'
@@ -114,11 +127,21 @@ class WeeklyTrackingController extends Controller
             $file = $request->file('file');
             if ($file->isValid()) {
                 $path = $file->store('public/weekly_trackings');
-                WeeklyTracking::create([
+                
+                WeeklyTracking::create([ 
                     'application_id' => $application->id,
                     'file_path' => $path,
                     'is_accepted' => false
                 ]);
+                
+                Mail::to($application->Teacher->User->email)->send(
+                    new UploadWeeklyTrackingEmail(
+                        $application->Student->lastname . ', ' . $application->Student->name,
+                        $application->Student->User->email,
+                        $application->id,
+                        $application->Teacher->name
+                    )
+                );
                 return response()->json([
                     'success' => true,
                     'message' => 'Seguimiento semanal subido correctamente',

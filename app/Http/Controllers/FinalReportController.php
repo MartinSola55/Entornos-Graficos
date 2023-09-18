@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UploadFinalReportEmail;
 use App\Models\Application;
 use App\Models\FinalReport;
 use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class FinalReportController extends Controller
@@ -50,7 +52,7 @@ class FinalReportController extends Controller
             DB::beginTransaction();
             $file = $request->file('file');
             if ($file->isValid()) {
-                $path = $file->store('public/weekly_trackings');
+                $path = $file->store('public/weekly_trackings');                
                 FinalReport::create([
                     'application_id' => $application->id,
                     'file_path' => $path,
@@ -58,6 +60,15 @@ class FinalReportController extends Controller
                     'observations' => ''
                 ]);
 
+                Mail::to($application->Teacher->User->email)->send(
+                    new UploadFinalReportEmail(
+                        $application->Student->lastname . ', ' . $application->Student->name,
+                        $application->Student->User->email,
+                        $application->id,
+                        $application->Teacher->name
+                    )
+                );
+                
                 $application->is_finished = true;
                 $application->save();
 

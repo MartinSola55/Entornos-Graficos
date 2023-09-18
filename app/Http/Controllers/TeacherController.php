@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Person\PersonCreateRequest;
 use App\Http\Requests\Person\PersonUpdateRequest;
+use App\Mail\ApproveApplicationEmail;
 use App\Models\Application;
 use App\Models\Person;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class TeacherController extends Controller
 {
@@ -191,6 +193,14 @@ class TeacherController extends Controller
             $application->update([
                 'is_approved' => true,
             ]);
+
+            Mail::to($application->Student->User->email)->send(
+                new ApproveApplicationEmail(
+                    $application->Student->name,
+                    $application->id,
+                    $application->Teacher->User->email
+                )
+            );
 
             return response()->json([
                 'success' => true,
