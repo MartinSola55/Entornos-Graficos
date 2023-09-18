@@ -221,6 +221,46 @@
                         </div>
                     </div>
                 </div>
+            @elseif (auth()->user()->rol_id == 4 && $application->teacher_id === null)
+                <div class="col-12 col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Asignar profesor</h2>
+                            <form id="form-teacher" action="/application/assignTeacher" method="POST">
+                                @csrf
+                                <input type="hidden" name="application_id" value="{{ $application->id }}">
+                                <hr class="m-0">
+                                <div class="table-responsive">
+                                    <table id="DataTable" class="table table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Nombre</th>
+                                                <th>Teléfono</th>
+                                                <th>Email</th>
+                                                <th>Seleccionar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table_body">
+                                            @foreach ($professors as $professor)
+                                                <tr data-id="{{ $professor->Person->id }}" >
+                                                    <td>{{ $professor->Person->lastname }}, {{ $professor->Person->name }}</td>
+                                                    <td>{{ $professor->Person->phone }}</td>
+                                                    <td>{{ $professor->email }}</td>
+                                                    <td class="text-center">
+                                                        <input type="radio" name="teacher_id" value="{{ $professor->Person->id }}" id="professor_{{ $professor->Person->id }}" class="check" data-radio="iradio_square-purple" />
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="d-flex justify-content-end mt-2">
+                                    <button id="btnTeacher" class="btn btn-info waves-effect waves-light" type="button" style="display: none">Asignar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             @endif
 
             <div class="col-12">
@@ -290,8 +330,33 @@
         </div>
     </div>
 
+    <style>
+        .dataTables_scrollHeadInner {
+            width: 100% !important;
+        }
+        .dataTables_scrollHeadInner table {
+            width: 100% !important;
+        }
+    </style>
+
     <script>
         $(document).ready(function() {
+            $("#DataTable").DataTable({
+                "language": {
+                    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ profesores",
+                    "sInfoEmpty": "Mostrando 0 a 0 de 0 profesores",
+                    "sInfoFiltered": "(filtrado de _MAX_ profesores en total)",
+                    "emptyTable": 'No hay profesores que coincidan con la búsqueda',
+                    "sLengthMenu": "Mostrar _MENU_ profesores",
+                    "sSearch": "Buscar:",
+                },
+                "scrollY": '30vh',
+                "scrollCollapse": true,
+                "paging": false,
+                "info": false,
+                "order": [[ 0, "asc" ]],
+            });
+
             let drEvent = $('.dropify').dropify({
                 messages: {
                     'default': 'Arrastre el archivo aquí o haga clic',
@@ -329,6 +394,48 @@
             } else {
                 $('#btn-uploadWT').hide();
             }
+        });
+
+        $('input').on('ifClicked', function (ev) { 
+            $("#btnTeacher").show();
+        });
+
+        $("#btnTeacher").on("click", function() {
+            let professor_name = $(`#form-teacher input[name='teacher_id']:checked`).parent().parent().parent().find('td:nth-child(1)').text();
+            Swal.fire({
+                title: "Esta acción no se puede revertir",
+                text: `¿Seguro deseas asignar a ${professor_name} a esta PPS?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-info waves-effect waves-light px-3 py-2',
+                    cancelButton: 'btn btn-default waves-effect waves-light px-3 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let form = $("#form-teacher");
+                    $.ajax({
+                        url: $(form).attr('action'),
+                        method: $(form).attr('method'),
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: response.message,
+                                confirmButtonColor: '#1e88e5',
+                                allowOutsideClick: false,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(errorThrown) {
+                            SwalError(errorThrown.responseJSON.message);
+                        }
+                    });
+                }
+            });
         });
 
         $("#btnSendObservation").on("click", function() {

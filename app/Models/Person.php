@@ -25,4 +25,19 @@ class Person extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function StudentApplications()
+    {
+        return $this->hasMany(Application::class, 'student_id');
+    }
+
+    public function TeacherApplications()
+    {
+        return $this->hasMany(Application::class, 'teacher_id');
+    }
+
+    public function ResponsibleApplications()
+    {
+        return $this->hasMany(Application::class, 'responsible_id');
+    }
 }

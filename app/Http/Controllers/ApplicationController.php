@@ -83,7 +83,16 @@ class ApplicationController extends Controller
                 $error->message = 'No está autorizado a ver esta solicitud';
                 return view('error', compact('error'));
             }
-            return view('applications.details', compact('application'));
+            $all_professors = User::where('rol_id', 3)->with('Person')->get();
+            $professors = [];
+            foreach($all_professors as $prof) {
+                $cant_pps = Application::where('teacher_id', $prof->Person->id)->where('is_finished', false)->count();
+                if ($cant_pps <= 10) {
+                    $professors[] = $prof;
+                }
+            }
+
+            return view('applications.details', compact('application', 'professors'));
         } catch (\Exception $e) {
             $error = new \stdClass();
             $error->code = 500;

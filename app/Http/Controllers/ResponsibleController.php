@@ -175,4 +175,47 @@ class ResponsibleController extends Controller
             ], 400);
         }
     }
+
+    public function assignTeacher(Request $request) {
+        try {
+            $teacher = Person::findOrFail($request->input('teacher_id'));
+            $application = Application::findOrFail($request->input('application_id'));
+            if ($application->teacher_id) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al asignar el docente',
+                    'message' => 'La solicitud ya tiene un docente asignado',
+                ], 400);
+            }
+            if ($application->is_finished) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al asignar el docente',
+                    'message' => 'La solicitud ya fue finalizada',
+                ], 400);
+            }
+            if (auth()->user()->rol_id != 4) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al asignar el docente',
+                    'message' => 'El usuario no es un responsable',
+                ], 400);
+            }
+            $application->update([
+                'teacher_id' => $teacher->id,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Docente asignado correctamente'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'title' => 'Error al tomar la solicitud',
+                'message' => 'Intente nuevamente o comuníquese para soporte',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

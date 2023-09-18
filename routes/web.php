@@ -66,4 +66,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/application/create', [App\Http\Controllers\ApplicationController::class, 'create']);
     Route::post('/application/editObservation', [App\Http\Controllers\TeacherController::class, 'editObservation']);
     Route::post('/application/takeApplication/{id}', [App\Http\Controllers\ResponsibleController::class, 'takeApplication']);
+    Route::post('/application/assignTeacher', [App\Http\Controllers\ResponsibleController::class, 'assignTeacher']);
 });
