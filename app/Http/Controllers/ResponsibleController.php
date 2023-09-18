@@ -218,4 +218,46 @@ class ResponsibleController extends Controller
             ], 400);
         }
     }
+
+    public function deleteTeacher(Request $request) {
+        try {
+            $application = Application::findOrFail($request->input('application_id'));
+            if (!$application->teacher_id) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al eliminar el docente',
+                    'message' => 'La solicitud no tiene un docente asignado',
+                ], 400);
+            }
+            if ($application->is_finished) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al eliminar el docente',
+                    'message' => 'La solicitud ya fue finalizada',
+                ], 400);
+            }
+            if (auth()->user()->rol_id != 4) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al eliminar el docente',
+                    'message' => 'El usuario no es un responsable',
+                ], 400);
+            }
+            $application->update([
+                'teacher_id' => null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Docente eliminado correctamente'
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'title' => 'Error al eliminar el profesor',
+                'message' => 'Intente nuevamente o comuníquese para soporte',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

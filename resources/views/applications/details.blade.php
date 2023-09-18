@@ -114,7 +114,18 @@
                                     <tr>
                                         <td class="col-4"><b class="font-weight-bold">Profesor a cargo:</b></td>
                                         @if ($application->teacher_id != null)
-                                            <td>{{ $application->Teacher->lastname }}, {{ $application->Teacher->name }}</td>
+                                            <td>
+                                                <div class="d-flex flex-row justify-content-start align-items-center">
+                                                    {{ $application->Teacher->lastname }}, {{ $application->Teacher->name }}
+                                                    @if ($application->is_finished === false)
+                                                        <form id="form-deleteTeacher" action="/application/deleteTeacher" method="post">
+                                                            @csrf
+                                                            <input type="hidden" name="application_id" value="{{ $application->id }}">
+                                                            <button id="btnDeleteTeacher" class="btn btn-sm waves-effect waves-light" type="button" data-name="{{ $application->Teacher->lastname }}, {{ $application->Teacher->name }}"><i class="bi bi-trash3" style="color: red;"></i></button>
+                                                        </form>
+                                                    @endif
+                                                </div>
+                                            </td>
                                         @else
                                             <td>Sin asignar</td>
                                         @endif
@@ -131,7 +142,7 @@
                                         <td class="col-4">
                                             <b class="font-weight-bold">Observaciones:</b>
                                             @if (auth()->user()->rol_id == 3)
-                                                <button class="btn btn-secondarry btn-sm waves-effect waves-light" type="button" data-toggle="modal" data-target="#modalObservation"><i class="bi bi-pencil-square"></i></button>
+                                                <button class="btn btn-sm waves-effect waves-light" type="button" data-toggle="modal" data-target="#modalObservation"><i class="bi bi-pencil-square"></i></button>
                                             @endif
                                         </td>
                                         <td>{{ $application->observation != null ? $application->observation : "-" }}</td>
@@ -400,10 +411,46 @@
             $("#btnTeacher").show();
         });
 
+        $("#btnDeleteTeacher").on("click", function() {
+            let professor_name = $(this).data('name');
+            Swal.fire({
+                text: `¿Seguro deseas eliminar a ${professor_name} de esta PPS?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-danger waves-effect waves-light px-3 py-2',
+                    cancelButton: 'btn btn-default waves-effect waves-light px-3 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let form = $("#form-deleteTeacher");
+                    $.ajax({
+                        url: $(form).attr('action'),
+                        method: $(form).attr('method'),
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: response.message,
+                                confirmButtonColor: '#1e88e5',
+                                allowOutsideClick: false,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(errorThrown) {
+                            SwalError(errorThrown.responseJSON.message);
+                        }
+                    });
+                }
+            });
+        });
+
         $("#btnTeacher").on("click", function() {
             let professor_name = $(`#form-teacher input[name='teacher_id']:checked`).parent().parent().parent().find('td:nth-child(1)').text();
             Swal.fire({
-                title: "Esta acción no se puede revertir",
                 text: `¿Seguro deseas asignar a ${professor_name} a esta PPS?`,
                 icon: 'question',
                 showCancelButton: true,
