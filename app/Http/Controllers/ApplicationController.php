@@ -75,7 +75,7 @@ class ApplicationController extends Controller
     public function details($id)
     {
         try {
-            $application = Application::find($id)->load('Student', 'Teacher', 'Responsible', 'WorkPlan', 'WeeklyTrackings', 'FinalReport');
+            $application = Application::findOrFail($id)->load('Student', 'Teacher', 'Responsible', 'WorkPlan', 'WeeklyTrackings', 'FinalReport');
             $user = User::where('id', auth()->user()->id)->first();
             if (($user->rol_id == 2 && $user->Person->id != $application->student_id) || ($user->rol_id == 3 && $user->Person->id != $application->teacher_id)) {
                 $error = new \stdClass();

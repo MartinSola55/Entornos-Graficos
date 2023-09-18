@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Application;
 use App\Models\Person;
+use App\Models\User;
 use Carbon\Carbon;
 use DateTimeZone;
 use Illuminate\Http\Request;
@@ -32,9 +34,15 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $persons = Person::all();
+        $all_professors = User::where('rol_id', 3)->with('Person')->get();
+        $professors = [];
+        foreach ($all_professors as $prof) {
+            $cant_pps = Application::where('teacher_id', $prof->Person->id)->where('is_finished', false)->count();
+            if ($cant_pps <= 10) {
+                $professors[] = $prof;
+            }
+        }
 
-        return view('home', compact('user', 'persons'));
+        return view('home', compact('professors'));
     }
 }

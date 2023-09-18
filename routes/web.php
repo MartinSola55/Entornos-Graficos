@@ -21,9 +21,6 @@ Auth::routes();
 // ADMIN
 Route::middleware(['auth', 'admin'])->group(function () {
 
-    // HOME
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
     // STUDENT
     Route::get('/student/index', [App\Http\Controllers\StudentController::class, 'index']);
     Route::post('/student/create', [App\Http\Controllers\StudentController::class, 'create']);
@@ -65,6 +62,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/application/create', [App\Http\Controllers\ApplicationController::class, 'create']);
     Route::post('/application/editObservation', [App\Http\Controllers\TeacherController::class, 'editObservation']);
+    Route::post('/application/approve/{id}', [App\Http\Controllers\TeacherController::class, 'approveApplication']);
     Route::post('/application/takeApplication/{id}', [App\Http\Controllers\ResponsibleController::class, 'takeApplication']);
     Route::post('/application/assignTeacher', [App\Http\Controllers\ResponsibleController::class, 'assignTeacher']);
     Route::post('/application/deleteTeacher', [App\Http\Controllers\ResponsibleController::class, 'deleteTeacher']);

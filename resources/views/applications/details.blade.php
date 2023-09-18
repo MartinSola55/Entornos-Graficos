@@ -117,7 +117,7 @@
                                             <td>
                                                 <div class="d-flex flex-row justify-content-start align-items-center">
                                                     {{ $application->Teacher->lastname }}, {{ $application->Teacher->name }}
-                                                    @if ($application->is_finished === false)
+                                                    @if (auth()->user()->rol_id == 4 && $application->is_finished === false)
                                                         <form id="form-deleteTeacher" action="/application/deleteTeacher" method="post">
                                                             @csrf
                                                             <input type="hidden" name="application_id" value="{{ $application->id }}">
@@ -186,10 +186,13 @@
                                 @endif
 
                             </div>
-                            @if (auth()->user()->rol_id == 3 && $application->is_finished === true)
+                            @if (auth()->user()->rol_id == 3 && $application->is_finished === true && $application->is_approved === false)
                                 <hr>
                                 <div class="d-flex justify-content-end">
-                                    <button id="btnFinish" class="btn btn-success waves-effect waves-light" type="button">Aprobar solicitud</button>
+                                    <form id="form-approve" action="/application/approve/{{ $application->id }}" method="post">
+                                        @csrf
+                                        <button id="btnFinish" class="btn btn-success waves-effect waves-light" type="button">Aprobar solicitud</button>
+                                    </form>
                                 </div>
                             @endif
                         </div>
@@ -389,6 +392,15 @@
                 $('#btn-uploadFR').hide();
             });
         });
+
+        const SwalError = (title, text = "") => {
+            Swal.fire({
+                icon: 'error',
+                title: title,
+                text: text,
+                confirmButtonColor: '#1e88e5',
+            });
+        };
     </script>
 
     <script>
@@ -409,6 +421,43 @@
 
         $('input').on('ifClicked', function (ev) { 
             $("#btnTeacher").show();
+        });
+
+        $("#btnFinish").on("click", function () {
+            Swal.fire({
+                title: 'Esta acción no se puede revertir',
+                text: '¿Seguro deseas aprobar esta solicitud?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-info waves-effect waves-light px-3 py-2',
+                    cancelButton: 'btn btn-default waves-effect waves-light px-3 py-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let form = $("#form-approve");
+                    $.ajax({
+                        url: $(form).attr('action'),
+                        method: $(form).attr('method'),
+                        data: $(form).serialize(),
+                        success: function(response) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: response.message,
+                                confirmButtonColor: '#1e88e5',
+                                allowOutsideClick: false,
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function(errorThrown) {
+                            SwalError(errorThrown.responseJSON.message);
+                        }
+                    });
+                }
+            });
         });
 
         $("#btnDeleteTeacher").on("click", function() {

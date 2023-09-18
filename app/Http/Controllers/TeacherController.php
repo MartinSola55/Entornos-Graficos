@@ -162,4 +162,48 @@ class TeacherController extends Controller
             ], 400);
         }
     }
+
+    public function approveApplication($id) {
+        try {
+            $application = Application::findOrFail($id);
+
+            if (auth()->user()->rol_id != 3) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al aprobar la solicitud',
+                    'message' => 'El usuario no es un profesor',
+                ], 400);
+            }
+            if (auth()->user()->rol_id == 3 && $application->teacher_id != auth()->user()->Person->id) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al aprobar la solicitud',
+                    'message' => 'No tiene permisos para aprobar la solicitud',
+                ], 400);
+            }
+            if ($application->is_finished === false) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al aprobar la solicitud',
+                    'message' => 'La solicitud no está finalizada',
+                ], 400);
+            }
+            $application->update([
+                'is_approved' => true,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Solicitud aprobada correctamente'
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'title' => 'Error al aprobar la solicitud',
+                'message' => 'Intente nuevamente o comuníquese para soporte',
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
 }

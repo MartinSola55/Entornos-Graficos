@@ -122,14 +122,10 @@
                                 <ul class="dropdown-user">
                                     <li>
                                         <div class="dw-user-box">
-                                            <div class="u-img">
-                                                <img src="{{ asset('images/profile.png') }}" alt="user">
-                                            </div>
                                             <div class="u-text">
                                                 @if(Auth::user())
-                                                <h4>{{ Auth::user()->role->name }}</h4>
+                                                <h4>{{ auth()->user()->Person->lastname }}, {{ auth()->user()->Person->name }}</h4>
                                                 <p class="text-muted">{{ Auth::user()->email }}</p>
-                                                @else
                                                 @endif
                                             </div>
                                         </div>

@@ -41,22 +41,22 @@
             <div class="col-lg-12">
                 <div class="card shadow">
                     <div class="card-body">
-                        <h4 class="card-title">Personas</h4>
+                        <h4 class="card-title">Profesores habilitados para PPS</h4>
                         <div class="table-responsive m-t-20">
                             <table class="table stylish-table">
                                 <thead>
                                     <tr>
                                         <th>Nombre</th>
-                                        <th>Apellido</th>
+                                        <th>Email</th>
                                         <th>Legajo</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($persons as $person)
+                                    @foreach ($professors as $professor)
                                     <tr>
-                                        <td>{{ $person->name }}</td>
-                                        <td>{{ $person->lastname }}</td>
-                                        <td>{{ $person->file_number }}</td>
+                                        <td>{{ $professor->Person->lastname }}, {{ $professor->Person->name }}</td>
+                                        <td>{{ $professor->email }}</td>
+                                        <td>{{ $professor->Person->file_number }}</td>
                                     </tr>                                      
                                     @endforeach
                                 </tbody>
