@@ -161,7 +161,7 @@
                                                             <table width="100%" cellpadding="0" cellspacing="0">
                                                                 <tr>
                                                                     <td style="padding-right: 0px;padding-left: 0px;">
-                                                                        <img src="{{ asset('images/logo.png') }}" alt="image"title="image"style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 540px;"width="540" />
+                                                                        <img src="https://www.utn.edu.ar/images/logo-utn.png" alt="UTN"title="UTN"style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 100%;max-width: 540px;"width="540" />
                                                                     </td>
                                                                 </tr>
                                                             </table>
