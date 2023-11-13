@@ -72,15 +72,13 @@
     </div>
 
     <div id="main-wrapper">
-        @auth
-
         <header class="topbar">
             <nav class="navbar top-navbar navbar-expand-md navbar-light">
                 <!-- ============================================================== -->
                 <!-- Logo -->
                 <!-- ============================================================== -->
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ url('home') }}">
+                    <a class="navbar-brand" href="{{ route('home') }}">
                         <!-- Logo icon -->
                         <b>
                             <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
@@ -132,15 +130,21 @@
                                     </li>
                                     <li role="separator" class="divider"></li>
                                     <li>
-                                        <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                        @auth
+                                        <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                             <i class="fa fa-power-off"></i>
                                             Cerrar sesión
                                         </a>
+                                        @endauth
+                                        @guest
+                                            <a href="{{ url('login') }}"><i class="fa fa-power-on"></i>Iniciar sesión</a>
+                                        @endguest
                                     </li>
-
+                                    @auth
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
+                                    @endauth
                                 </ul>
                             </div>
                         </li>
@@ -158,48 +162,48 @@
                     <ul id="sidebarnav">
                         <li class="nav-small-cap">FACULTAD</li>
                         <li>
-                            <a class="waves-effect waves-dark" href="{{ url('/home') }}" aria-expanded="false"><i class="bi bi-house"></i><span class="hide-menu">Inicio</span></a>
+                            <a class="waves-effect waves-dark" href="{{ route('home') }}" aria-expanded="false"><i class="bi bi-house"></i><span class="hide-menu">Inicio</span></a>
                         </li>
+
+                        @auth
                         <li>
                             <a class="waves-effect waves-dark" href="{{ url('/application/index') }}" aria-expanded="false"><i class="bi bi-file-text"></i><span class="hide-menu">Solicitudes</span></a>
                         </li>
                         
                         {{-- ADMIN --}}
-                        @if (auth()->user()->rol_id == '1')
-                            <li><a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="bi bi-person"></i><span class="hide-menu">Personas</span></a>
-                                <ul aria-expanded="false" class="collapse">
-                                    <li><a href="{{ url('/student/index') }}">Alumnos</a></li>
-                                    <li><a href="{{ url('/teacher/index') }}">Docentes</a></li>
-                                    <li><a href="{{ url('/responsible/index') }}">Responsables</a></li>
-                                </ul>
-                            </li>
+                            @if (auth()->user()->rol_id == '1')
+                                <li><a class="has-arrow waves-effect waves-dark" aria-expanded="false"><i class="bi bi-person"></i><span class="hide-menu">Personas</span></a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        <li><a href="{{ url('/student/index') }}">Alumnos</a></li>
+                                        <li><a href="{{ url('/teacher/index') }}">Docentes</a></li>
+                                        <li><a href="{{ url('/responsible/index') }}">Responsables</a></li>
+                                    </ul>
+                                </li>
 
-                        {{-- ESTUDIANTE --}}
-                        @elseif(auth()->user()->rol_id == '2')
+                            {{-- ESTUDIANTE --}}
+                            @elseif(auth()->user()->rol_id == '2')
 
-                        {{-- PROFESOR --}}
-                        @elseif(auth()->user()->rol_id == '3')
+                            {{-- PROFESOR --}}
+                            @elseif(auth()->user()->rol_id == '3')
 
-                        {{-- RESPONSABLE --}}
-                        @elseif(auth()->user()->rol_id == '4')
-                        
-                        @endif
+                            {{-- RESPONSABLE --}}
+                            @elseif(auth()->user()->rol_id == '4')
+                            
+                            @endif
+                        @endauth
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
             </div>
         </aside>
-        @endauth
 
-        <main class="@auth page-wrapper @endauth">
+        <main class="page-wrapper">
             @yield('content')
         </main>
 
-        @auth
-            <footer class="footer">
-                © {{ $today->format('Y') }} - SYSACAD
-            </footer>
-        @endauth
+        <footer class="footer">
+            © {{ $today->format('Y') }} - SYSACAD
+        </footer>
     </div>
 </body>
 
