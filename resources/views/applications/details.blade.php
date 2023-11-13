@@ -453,7 +453,7 @@
                             });
                         },
                         error: function(errorThrown) {
-                            SwalError(errorThrown.responseJSON.message);
+                            SwalError(errorThrown.responseJSON.title, errorThrown.responseJSON.message);
                         }
                     });
                 }

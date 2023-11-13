@@ -24,7 +24,7 @@ class StudentController extends Controller
             DB::beginTransaction();
             $user = User::create([
                 'email' => $request->input('email'),
-                'password' => bcrypt($request->input('file_number')),
+                'password' => bcrypt($request->input('password')),
                 'rol_id' => 2,
             ]);
 

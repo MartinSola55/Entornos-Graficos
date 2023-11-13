@@ -26,7 +26,7 @@ class TeacherController extends Controller
             DB::beginTransaction();
             $user = User::create([
                 'email' => $request->input('email'),
-                'password' => bcrypt($request->input('file_number')),
+                'password' => bcrypt($request->input('password')),
                 'rol_id' => 3,
             ]);
 
@@ -190,6 +190,16 @@ class TeacherController extends Controller
                     'message' => 'La solicitud no está finalizada',
                 ], 400);
             }
+            foreach ($application->WeeklyTrackings as $wt) {
+                if ($wt->is_accepted === false) {
+                    return response()->json([
+                        'success' => false,
+                        'title' => 'Error al aprobar la solicitud',
+                        'message' => 'Existen seguimientos sin aceptar',
+                    ], 400);
+                }
+            }
+
             $application->update([
                 'is_approved' => true,
             ]);
