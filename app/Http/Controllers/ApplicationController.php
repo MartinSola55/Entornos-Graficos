@@ -219,8 +219,14 @@ class ApplicationController extends Controller
     public function downloadWorkPlan($id) {
         try {
             $application = Application::find($id);
-            $student = Person::where('user_id', auth()->user()->id)->first();
-            if ($application->student_id != $student->id) {
+            $person = Person::where('user_id', auth()->user()->id)->first();
+            if ($application->student_id != $person->id && auth()->user()->rol_id == 2) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al descargar el plan de trabajo',
+                    'message' => 'No está autorizado a realizar esta descarga'
+                ], 400);
+            } else if ($application->teacher_id != $person->id && auth()->user()->rol_id == 3) {
                 return response()->json([
                     'success' => false,
                     'title' => 'Error al descargar el plan de trabajo',

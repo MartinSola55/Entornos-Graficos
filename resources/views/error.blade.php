@@ -34,7 +34,7 @@
                 <h1 class="text-info">{{ $error->code }}</h1>
                 <h3 class="text-uppercase">ERROR</h3>
                 <p class="text-muted m-t-30 m-b-30">{{ $error->message }}</p>
-                <a href="{{ url('home') }}" class="btn btn-info btn-rounded waves-effect waves-light m-b-40">Volver al inicio</a>
+                <a href="{{ route('home') }}" class="btn btn-info btn-rounded waves-effect waves-light m-b-40">Volver al inicio</a>
             </div>
             <footer class="footer text-center">© {{ $today->format('Y') }} - SYSACAD</footer>
         </div>

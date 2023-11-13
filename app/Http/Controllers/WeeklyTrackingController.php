@@ -84,11 +84,17 @@ class WeeklyTrackingController extends Controller
     {
         try {
             $wt = WeeklyTracking::find($id)->load('Application');
-            $student = Person::where('user_id', auth()->user()->id)->first();
-            if ($wt->Application->student_id != $student->id) {
+            $person = Person::where('user_id', auth()->user()->id)->first();
+            if ($wt->Application->student_id != $person->id && auth()->user()->rol_id == 2) {
                 return response()->json([
                     'success' => false,
-                    'title' => 'Error al descargar el plan de trabajo',
+                    'title' => 'Error al descargar el seguimiento semanal',
+                    'message' => 'No está autorizado a realizar esta descarga'
+                ], 400);
+            } else if ($wt->Application->teacher_id != $person->id && auth()->user()->rol_id == 3) {
+                return response()->json([
+                    'success' => false,
+                    'title' => 'Error al descargar el seguimiento semanal',
                     'message' => 'No está autorizado a realizar esta descarga'
                 ], 400);
             }
@@ -98,13 +104,13 @@ class WeeklyTrackingController extends Controller
             }
             return response()->json([
                 'success' => false,
-                'title' => 'Error al descargar el plan de trabajo',
+                'title' => 'Error al descargar el seguimiento semanal',
                 'message' => 'El archivo no existe'
             ], 400);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'title' => 'Error al descargar el plan de trabajo',
+                'title' => 'Error al descargar el seguimiento semanal',
                 'message' => 'Intente nuevamente o comuníquese para soporte',
                 'error' => $e->getMessage()
             ], 400);
