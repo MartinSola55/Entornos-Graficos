@@ -1,66 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Gestión de Prácticas Profesionales Supervisadas (SYSACAD)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+El SYSACAD es una plataforma integral diseñada para simplificar y mejorar la gestión de las Prácticas Profesionales Supervisadas (PPS) de los alumnos de la universidad. Esta herramienta esencial beneficia tanto a los alumnos como a los tutores y responsables de la facultad al optimizar el proceso de solicitud, seguimiento y aprobación de las PPS.
 
-## About Laravel
+## Características Principales
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Interfaz Intuitiva:** Ofrece a los alumnos una manera rápida y sencilla de registrar solicitudes de inicio de PPS.
+- **Comunicación Eficiente:** Facilita la interacción entre alumnos y responsables, agilizando la asignación de tutores.
+- **Visualización de Docentes:** Proporciona información detallada sobre docentes disponibles para ser tutores, incluyendo disponibilidad y áreas de especialización.
+- **Seguimiento Detallado:** Permite a los alumnos cargar planes de trabajo, seguimientos semanales e informes finales, revisados y aprobados por los tutores.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Además de su funcionalidad principal, el sitio web ofrece una página de inicio pública, permitiendo a cualquier visitante conocer a los docentes disponibles para ser tutores de PPS.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Despliegue de la Aplicación Laravel
 
-## Learning Laravel
+### Comandos Básicos para el Despliegue
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Para desplegar una aplicación basada en Laravel, estos son algunos comandos básicos que puedes utilizar junto con Docker:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+docker-compose up -d           # Inicia los contenedores de Docker en segundo plano.
+docker exec -it id_contenedor php composer.phar install   # Instala las dependencias del proyecto.
+docker exec -it id_contenedor php artisan key:generate    # Genera una nueva clave de aplicación.
+docker exec -it id_contenedor php artisan config:cache     # Combina y almacena en caché archivos de configuración.
+docker exec -it id_contenedor php artisan migrate          # Ejecuta migraciones de la base de datos.
+docker exec -it id_contenedor php artisan db:seed          # Ejecuta los seeders de la base de datos.
+docker exec -it id_contenedor php artisan serve            # Inicia el servidor de desarrollo de Laravel.
+docker exec -it id_contenedor php artisan optimize         # Optimiza la aplicación para un mejor rendimiento.
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Recuerda consultar la documentación oficial de Laravel para obtener más detalles sobre el despliegue de la aplicación.
 
-## Laravel Sponsors
+## Configuraciones Importantes
+Al desplegar tu aplicación Laravel, es esencial configurar adecuadamente ciertas variables en el entorno de producción para garantizar el correcto funcionamiento del sistema. Estas variables se encuentran en el archivo .env y contienen información sensible como contraseñas y claves de cifrado.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Ejemplo de Variables de Entorno
 
-### Premium Partners
+### Configuración de la Aplicación
+APP_DEBUG=false
+APP_ENV=production
+APP_KEY=base64:key_generada_por_laravel
+APP_LOCALE=es
+APP_NAME=SYSACAD
+APP_URL=http://localhost/
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Configuración de la Base de Datos
+DB_CONNECTION=pgsql
+DB_DATABASE=nombre_de_la_base_de_datos
+DB_HOST=host_de_la_base_de_datos
+DB_PASSWORD=contraseña_de_la_base_de_datos
+DB_PORT=puerto_de_la_base_de_datos
+DB_USERNAME=usuario_de_la_base_de_datos
 
-## Contributing
+### Otras Configuraciones (Correo, Logs, etc.)
+FILESYSTEM_DISK=local
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS=info@sysacad.com
+MAIL_FROM_NAME=SYSACAD
+MAIL_HOST=host_de_la_cuenta_de_correo
+MAIL_MAILER=smtp
+MAIL_PASSWORD=contraseña_de_la_cuenta_de_correo
+MAIL_PORT=puerto_de_la_cuenta_de_correo
+MAIL_USERNAME=usuario_de_la_cuenta_de_correo
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Asegúrate de configurar estas variables de manera segura en tu servidor de producción y no exponerlas públicamente.
