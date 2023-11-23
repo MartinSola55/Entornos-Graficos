@@ -78,6 +78,7 @@
                     <div class="card-body sombra p-4">
                         <form class="form-horizontal form-material" id="loginform" method="POST" action="{{ route('login') }}">
                             @csrf
+                            <a href="/" class="text-muted"><i class="bi bi-arrow-left"></i> Inicio</a>
                             <h3 class="box-title m-b-20 text-center">Iniciar sesión</h3>
                             <div class="form-group ">
                                 <div class="col-xs-12">
