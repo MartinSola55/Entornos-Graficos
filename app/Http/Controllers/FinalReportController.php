@@ -52,7 +52,7 @@ class FinalReportController extends Controller
             DB::beginTransaction();
             $file = $request->file('file');
             if ($file->isValid()) {
-                $path = $file->store('public/weekly_trackings');                
+                $path = $file->store('public/final_reports');                
                 FinalReport::create([
                     'application_id' => $application->id,
                     'file_path' => $path,
